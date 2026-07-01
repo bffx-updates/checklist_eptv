@@ -12,9 +12,10 @@
     "firebase:set-default-password": "node tools/set-default-password.mjs",
     "firebase:seed": "node tools/seed-firestore.mjs",
     "qrcode:generate": "node tools/generate-qrcodes.mjs",
-    "cap:init": "npx cap init InspecaoPostos br.com.inspecao.postos --web-dir .",
-    "cap:add:android": "npx cap add android",
-    "cap:sync": "npx cap sync android",
+    "build:web": "node tools/build-web.mjs",
+    "cap:init": "npx cap init InspecaoPostos br.com.inspecao.postos --web-dir www",
+    "cap:add:android": "npm run build:web && npx cap add android",
+    "cap:sync": "npm run build:web && npx cap sync android",
     "cap:open": "npx cap open android"
   },
   "dependencies": {

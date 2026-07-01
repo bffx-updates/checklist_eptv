@@ -1,0 +1,74 @@
+name: Build Android APK
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build PWA files
+        run: npm run build:web
+
+      - name: Add Android platform
+        run: npx cap add android
+
+      - name: Sync Android project
+        run: npx cap sync android
+
+      - name: Build debug APK
+        working-directory: android
+        run: |
+          chmod +x ./gradlew
+          ./gradlew assembleDebug
+
+      - name: Prepare APK artifact
+        run: |
+          mkdir -p release
+          cp android/app/build/outputs/apk/debug/app-debug.apk release/checklist-eptv-debug.apk
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: checklist-eptv-debug-apk
+          path: release/checklist-eptv-debug.apk
+
+      - name: Move apk-latest tag
+        run: |
+          git tag -f apk-latest
+          git push -f origin apk-latest
+
+      - name: Publish APK release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-latest
+          name: APK de teste
+          body: APK Android de teste gerado automaticamente pelo GitHub Actions.
+          files: release/checklist-eptv-debug.apk
+          make_latest: true
+          overwrite_files: true

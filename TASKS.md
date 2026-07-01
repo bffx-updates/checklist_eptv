@@ -9,11 +9,10 @@ Checklist:
 - [ ] Confirmar login Firebase no celular com a senha inicial `123456`.
 - [ ] Testar leitura de QR Code em navegador móvel.
 - [ ] Rodar `npm install`.
-- [ ] Rodar `npm run cap:add:android` se a pasta `android/` ainda não existir.
-- [ ] Rodar `npm run cap:sync`.
-- [ ] Abrir no Android Studio com `npm run cap:open`.
+- [x] Criar workflow GitHub Actions para gerar APK debug.
+- [ ] Baixar o APK gerado na Release `apk-latest`.
+- [ ] Instalar APK em celular Android.
 - [ ] Validar permissões de câmera e geolocalização.
-- [ ] Gerar APK de teste no Android Studio.
 - [ ] Instalar APK em celular Android e validar fluxo completo.
 
 Observações:

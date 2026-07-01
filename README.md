@@ -63,6 +63,9 @@ npm run cap:open
 
 No Android Studio, gere o APK pelo menu de build.
 
+Também há um workflow do GitHub Actions que gera o APK debug automaticamente ao publicar na branch `main`.
+O APK fica disponível em `Releases > APK de teste`.
+
 ## Gerar QR Codes
 
 Cada QR Code deve conter apenas o código do posto, por exemplo `P001`.

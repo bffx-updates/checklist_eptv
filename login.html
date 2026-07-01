@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0B0F1D">
+    <title>Inspeção Técnica | Login</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+  </head>
+  <body class="login-page">
+    <main class="login-card">
+      <div class="login-badge"><span>EPTV</span></div>
+      <h1>Inspeção Técnica</h1>
+      <p>Postos de retransmissão · EPTV</p>
+      <form id="login-form" class="form">
+        <label class="field">
+          <span>Técnico ou supervisor</span>
+          <input id="user-select" type="hidden" autocomplete="username">
+          <div class="user-picker">
+            <button id="user-picker-button" class="user-picker__button" type="button" aria-haspopup="listbox" aria-expanded="false">
+              Selecione o usuário
+            </button>
+            <div id="user-picker-menu" class="user-picker__menu" role="listbox" hidden></div>
+          </div>
+        </label>
+        <label class="field">
+          <span>Senha pessoal</span>
+          <div class="pass-wrap">
+            <input id="password" class="input" type="password" autocomplete="current-password" placeholder="Digite sua senha" required>
+            <button type="button" class="eye-toggle" id="toggle-pass">Mostrar</button>
+          </div>
+        </label>
+        <button class="button" type="submit">Entrar</button>
+        <small id="firebase-status"></small>
+      </form>
+    </main>
+    <script>
+      document.getElementById("toggle-pass").addEventListener("click", function () {
+        var input = document.getElementById("password");
+        var hidden = input.type === "password";
+        input.type = hidden ? "text" : "password";
+        this.textContent = hidden ? "Ocultar" : "Mostrar";
+      });
+    </script>
+    <script type="module" src="js/login.js"></script>
+  </body>
+</html>

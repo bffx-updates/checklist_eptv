@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0B0F1D">
+    <title>Inspeção Técnica</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand"><strong>Inspeção Técnica</strong><span>Retransmissão</span></div>
+        <div class="user-chip"><strong data-user-name></strong><span data-user-role></span></div>
+        <nav class="nav">
+          <a href="index.html" aria-current="page">Início</a>
+          <a href="scanner.html">Ler QR Code</a>
+          <a href="historico.html">Histórico</a>
+          <a href="senha.html">Alterar senha</a>
+          <a href="dashboard.html" data-supervisor-only>Dashboard</a>
+          <a href="configuracoes.html" data-supervisor-only>Configurações</a>
+        </nav>
+        <div class="sidebar__bottom"><button class="danger-button" data-logout>Sair</button></div>
+      </aside>
+      <main class="content">
+        <header class="page-head">
+          <div>
+            <h1>Painel inicial</h1>
+            <p>Resumo operacional e acesso rápido às inspeções de campo.</p>
+          </div>
+        </header>
+
+        <section class="stats-grid">
+          <article class="stat"><span>Postos</span><strong id="total-postos">0</strong></article>
+          <article class="stat"><span>Técnicos</span><strong id="total-tecnicos">0</strong></article>
+          <article class="stat"><span>Visitas hoje</span><strong id="visitas-hoje">0</strong></article>
+          <article class="stat"><span>Postos pendentes</span><strong id="postos-pendentes">0</strong></article>
+        </section>
+
+        <section class="panel">
+          <h2>Ações</h2>
+          <div class="button-grid">
+            <a class="button" href="scanner.html">Ler QR Code</a>
+            <a class="secondary-button" href="historico.html">Consultar histórico</a>
+            <a class="secondary-button" href="senha.html">Alterar senha</a>
+            <a class="secondary-button" href="dashboard.html" data-supervisor-only>Dashboard supervisor</a>
+            <a class="secondary-button" href="configuracoes.html" data-supervisor-only>Configurações</a>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="js/home.js"></script>
+  </body>
+</html>

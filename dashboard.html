@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0B0F1D">
+    <title>Dashboard | Inspeção Técnica</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand"><strong>Inspeção Técnica</strong><span>Retransmissão</span></div>
+        <div class="user-chip"><strong data-user-name></strong><span data-user-role></span></div>
+        <nav class="nav">
+          <a href="index.html">Início</a>
+          <a href="scanner.html">Ler QR Code</a>
+          <a href="historico.html">Histórico</a>
+          <a href="senha.html">Alterar senha</a>
+          <a href="dashboard.html" aria-current="page" data-supervisor-only>Dashboard</a>
+          <a href="configuracoes.html" data-supervisor-only>Configurações</a>
+        </nav>
+        <div class="sidebar__bottom"><button class="danger-button" data-logout>Sair</button></div>
+      </aside>
+      <main class="content">
+        <header class="page-head">
+          <div>
+            <h1>Dashboard</h1>
+            <p>Resumo geral, filtros e últimas visitas registradas.</p>
+          </div>
+        </header>
+
+        <section class="stats-grid">
+          <article class="stat"><span>Postos</span><strong id="dash-postos">0</strong></article>
+          <article class="stat"><span>Técnicos</span><strong id="dash-tecnicos">0</strong></article>
+          <article class="stat"><span>Visitas hoje</span><strong id="dash-hoje">0</strong></article>
+          <article class="stat"><span>Postos pendentes</span><strong id="dash-pendentes">0</strong></article>
+          <article class="stat"><span>Alertas</span><strong id="dash-alertas">0</strong></article>
+        </section>
+
+        <section class="panel">
+          <form id="dashboard-filters" class="filters">
+            <select id="filter-tecnico" class="select" name="tecnico"></select>
+            <select id="filter-posto" class="select" name="posto"></select>
+            <input class="input" name="cidade" placeholder="Cidade">
+            <input class="input" name="data" type="date">
+            <select class="select" name="status">
+              <option value="">Todos os status</option>
+              <option value="enviada">Enviada</option>
+              <option value="pendente">Pendente</option>
+            </select>
+          </form>
+          <div class="table-wrap">
+            <table id="visits-table">
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Hora</th>
+                  <th>Técnico</th>
+                  <th>Posto</th>
+                  <th>Status</th>
+                  <th>Fotos</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="visit-details" class="visit-list"></section>
+      </main>
+    </div>
+    <script type="module" src="js/dashboard.js"></script>
+  </body>
+</html>

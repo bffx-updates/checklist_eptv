@@ -1,0 +1,13 @@
+node_modules/
+uploads/
+previews/
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+android/
+dist/
+build/
+*.log
+*.tmp
+

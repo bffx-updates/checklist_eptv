@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0B0F1D">
+    <title>Histórico | Inspeção Técnica</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand"><strong>Inspeção Técnica</strong><span>Retransmissão</span></div>
+        <div class="user-chip"><strong data-user-name></strong><span data-user-role></span></div>
+        <nav class="nav">
+          <a href="index.html">Início</a>
+          <a href="scanner.html">Ler QR Code</a>
+          <a href="historico.html" aria-current="page">Histórico</a>
+          <a href="senha.html">Alterar senha</a>
+          <a href="dashboard.html" data-supervisor-only>Dashboard</a>
+          <a href="configuracoes.html" data-supervisor-only>Configurações</a>
+        </nav>
+        <div class="sidebar__bottom"><button class="danger-button" data-logout>Sair</button></div>
+      </aside>
+      <main class="content">
+        <header class="page-head">
+          <div>
+            <h1>Histórico</h1>
+            <p>Visitas salvas, enviadas e pendentes de sincronização.</p>
+          </div>
+        </header>
+        <section class="panel">
+          <label class="field">
+            <span>Filtrar por posto</span>
+            <input id="history-filter" class="input" placeholder="P001">
+          </label>
+        </section>
+        <section id="history-list" class="visit-list"></section>
+      </main>
+    </div>
+    <script type="module" src="js/historico.js"></script>
+  </body>
+</html>

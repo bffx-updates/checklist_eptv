@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0B0F1D">
+    <title>Alterar senha | Inspeção Técnica</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand"><strong>Inspeção Técnica</strong><span>Retransmissão</span></div>
+        <div class="user-chip"><strong data-user-name></strong><span data-user-role></span></div>
+        <nav class="nav">
+          <a href="index.html">Início</a>
+          <a href="scanner.html">Ler QR Code</a>
+          <a href="historico.html">Histórico</a>
+          <a href="senha.html" aria-current="page">Alterar senha</a>
+          <a href="dashboard.html" data-supervisor-only>Dashboard</a>
+          <a href="configuracoes.html" data-supervisor-only>Configurações</a>
+        </nav>
+        <div class="sidebar__bottom"><button class="danger-button" data-logout>Sair</button></div>
+      </aside>
+      <main class="content">
+        <header class="page-head">
+          <div>
+            <h1>Alterar senha</h1>
+            <p id="password-note"></p>
+          </div>
+        </header>
+
+        <section class="panel">
+          <form id="password-form" class="form">
+            <label class="field">
+              <span>Senha atual</span>
+              <input class="input" name="currentPassword" type="password" autocomplete="current-password" required>
+            </label>
+            <label class="field">
+              <span>Nova senha</span>
+              <input class="input" name="newPassword" type="password" autocomplete="new-password" minlength="6" required>
+            </label>
+            <label class="field">
+              <span>Confirmar nova senha</span>
+              <input class="input" name="confirmPassword" type="password" autocomplete="new-password" minlength="6" required>
+            </label>
+            <button class="button" type="submit">Salvar nova senha</button>
+          </form>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="js/senha.js"></script>
+  </body>
+</html>

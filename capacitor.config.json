@@ -1,0 +1,8 @@
+{
+  "appId": "br.com.inspecao.postos",
+  "appName": "Inspeção Postos",
+  "webDir": ".",
+  "server": {
+    "androidScheme": "https"
+  }
+}

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0B0F1D">
+    <title>Prévia | Ícones do checklist</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+  </head>
+  <body>
+    <main class="content" style="max-width: 760px;">
+      <header class="page-head">
+        <div>
+          <h1>P003 - Barretos</h1>
+          <p>Prévia dos ícones do checklist (sem login)</p>
+        </div>
+      </header>
+      <form class="form">
+        <section id="checklist-items"></section>
+      </form>
+    </main>
+    <script type="module">
+      import { checklistBase } from "./js/data.js";
+      import { checklistIcons } from "./js/checklist-icons.js";
+
+      document.getElementById("checklist-items").innerHTML = checklistBase
+        .map(
+          (label, index) => `
+            <fieldset class="check-item" aria-label="${index + 1}. ${label}">
+              <div class="check-item__head">
+                <span class="check-item__icon">${checklistIcons[index] || ""}</span>
+                <span class="check-item__label">
+                  <em>Item ${index + 1} de ${checklistBase.length}</em>
+                  <strong>${label}</strong>
+                </span>
+              </div>
+              <div class="segmented">
+                <label><input required type="radio" name="check-${index}" value="ok"> OK</label>
+                <label><input type="radio" name="check-${index}" value="atencao"> Atenção</label>
+                <label><input type="radio" name="check-${index}" value="na"> N/A</label>
+              </div>
+              <input class="input" name="obs-${index}" placeholder="Observação do item">
+            </fieldset>
+          `
+        )
+        .join("");
+    </script>
+  </body>
+</html>

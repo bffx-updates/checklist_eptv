@@ -1,0 +1,36 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function profile() {
+      return get(/databases/$(database)/documents/tecnicos/$(request.auth.uid)).data;
+    }
+
+    function isSupervisor() {
+      return signedIn()
+        && (request.auth.token.email == "supervisor@postos.local"
+          || profile().nivel == "supervisor");
+    }
+
+    match /postos/{postoId} {
+      allow read: if signedIn();
+      allow write: if isSupervisor();
+    }
+
+    match /tecnicos/{tecnicoId} {
+      allow read: if signedIn();
+      allow write: if isSupervisor();
+    }
+
+    match /visitas/{visitaId} {
+      allow create: if signedIn()
+        && request.resource.data.tecnico.uid == request.auth.uid;
+      allow read: if isSupervisor()
+        || (signedIn() && resource.data.tecnico.uid == request.auth.uid);
+      allow update, delete: if isSupervisor();
+    }
+  }
+}

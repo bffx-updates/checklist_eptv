@@ -1,0 +1,31 @@
+{
+  "name": "inspecao-postos",
+  "version": "0.1.0",
+  "private": true,
+  "description": "PWA para inspeção técnica de postos de retransmissão.",
+  "scripts": {
+    "serve": "npx http-server . -p 4173 -c-1",
+    "firebase:login": "npx firebase-tools login",
+    "firebase:deploy:rules": "npx firebase-tools deploy --only firestore:rules",
+    "firebase:deploy:hosting": "npx firebase-tools deploy --only hosting",
+    "firebase:create-users": "node tools/create-auth-users.mjs",
+    "firebase:set-default-password": "node tools/set-default-password.mjs",
+    "firebase:seed": "node tools/seed-firestore.mjs",
+    "qrcode:generate": "node tools/generate-qrcodes.mjs",
+    "cap:init": "npx cap init InspecaoPostos br.com.inspecao.postos --web-dir .",
+    "cap:add:android": "npx cap add android",
+    "cap:sync": "npx cap sync android",
+    "cap:open": "npx cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/core": "^6.1.2",
+    "firebase": "^12.15.0",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.1.2",
+    "firebase-tools": "^15.22.4",
+    "http-server": "^14.1.1"
+  }
+}

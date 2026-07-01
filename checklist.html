@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0B0F1D">
+    <title>Checklist | Inspeção Técnica</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand"><strong>Inspeção Técnica</strong><span>Retransmissão</span></div>
+        <div class="user-chip"><strong data-user-name></strong><span data-user-role></span></div>
+        <nav class="nav">
+          <a href="index.html">Início</a>
+          <a href="scanner.html">Ler QR Code</a>
+          <a href="historico.html">Histórico</a>
+          <a href="senha.html">Alterar senha</a>
+          <a href="dashboard.html" data-supervisor-only>Dashboard</a>
+          <a href="configuracoes.html" data-supervisor-only>Configurações</a>
+        </nav>
+        <div class="sidebar__bottom"><button class="danger-button" data-logout>Sair</button></div>
+      </aside>
+      <main class="content">
+        <header class="page-head">
+          <div>
+            <h1 id="posto-title">Checklist</h1>
+            <p id="posto-city"></p>
+          </div>
+        </header>
+
+        <form id="checklist-form" class="form">
+          <section id="checklist-items"></section>
+          <section class="panel">
+            <h2>Fotos</h2>
+            <label class="field">
+              <span>Adicionar imagens</span>
+              <input id="fotos" class="input" type="file" accept="image/*" capture="environment" multiple>
+            </label>
+            <div id="photo-preview" class="photo-preview"></div>
+          </section>
+          <section class="panel">
+            <h2>Localização e observações</h2>
+            <div class="form">
+              <button id="capture-gps" class="secondary-button" type="button">Capturar GPS</button>
+              <div id="gps-output" class="empty-state">GPS ainda não capturado.</div>
+              <label class="field">
+                <span>Observações gerais</span>
+                <textarea name="observacoes"></textarea>
+              </label>
+            </div>
+          </section>
+          <button class="button" type="submit">Salvar visita</button>
+        </form>
+      </main>
+    </div>
+    <script type="module" src="js/checklist.js"></script>
+  </body>
+</html>

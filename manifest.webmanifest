@@ -1,0 +1,19 @@
+{
+  "name": "Inspeção Técnica de Postos",
+  "short_name": "Inspeção",
+  "description": "Sistema de inspeção técnica de postos de retransmissão.",
+  "start_url": "login.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f7fb",
+  "theme_color": "#176b87",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

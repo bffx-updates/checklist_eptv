@@ -74,6 +74,8 @@ https://bffx-updates.github.io/checklist_eptv/login.html
 
 Com isso, alterações de tela, CSS e JavaScript publicadas na branch `main` atualizam o app instalado sem precisar reinstalar o APK. Só será necessário instalar um novo APK quando mudar algo nativo, como permissões, pacote Android ou plugins Capacitor.
 
+Se o login web publicado no GitHub Pages for usado fora do APK, adicione `bffx-updates.github.io` aos domínios autorizados do Firebase Authentication.
+
 ## Gerar QR Codes
 
 Cada QR Code deve conter apenas o código do posto, por exemplo `P001`.

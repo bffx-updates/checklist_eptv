@@ -13,9 +13,10 @@
     "firebase:seed": "node tools/seed-firestore.mjs",
     "qrcode:generate": "node tools/generate-qrcodes.mjs",
     "build:web": "node tools/build-web.mjs",
+    "patch:android": "node tools/patch-android-manifest.mjs",
     "cap:init": "npx cap init InspecaoPostos br.com.inspecao.postos --web-dir www",
     "cap:add:android": "npm run build:web && npx cap add android",
-    "cap:sync": "npm run build:web && npx cap sync android",
+    "cap:sync": "npm run build:web && npx cap sync android && npm run patch:android",
     "cap:open": "npx cap open android"
   },
   "dependencies": {

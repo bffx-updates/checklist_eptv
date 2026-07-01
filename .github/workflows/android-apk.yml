@@ -41,6 +41,9 @@ jobs:
       - name: Sync Android project
         run: npx cap sync android
 
+      - name: Add Android permissions
+        run: npm run patch:android
+
       - name: Build debug APK
         working-directory: android
         run: |

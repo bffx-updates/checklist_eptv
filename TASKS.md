@@ -10,6 +10,7 @@ Checklist:
 - [ ] Testar leitura de QR Code em navegador móvel.
 - [ ] Rodar `npm install`.
 - [x] Criar workflow GitHub Actions para gerar APK debug.
+- [x] Adicionar permissões Android de câmera e localização no Manifest.
 - [ ] Baixar o APK gerado na Release `apk-latest`.
 - [ ] Instalar APK em celular Android.
 - [ ] Validar permissões de câmera e geolocalização.

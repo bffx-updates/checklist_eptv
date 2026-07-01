@@ -11,6 +11,8 @@ Checklist:
 - [ ] Rodar `npm install`.
 - [x] Criar workflow GitHub Actions para gerar APK debug.
 - [x] Adicionar permissões Android de câmera e localização no Manifest.
+- [x] Publicar PWA no GitHub Pages para atualizar telas sem reinstalar APK.
+- [x] Versionar APK automaticamente com `versionCode` pelo número da build.
 - [ ] Baixar o APK gerado na Release `apk-latest`.
 - [ ] Instalar APK em celular Android.
 - [ ] Validar permissões de câmera e geolocalização.

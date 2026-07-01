@@ -14,9 +14,10 @@
     "qrcode:generate": "node tools/generate-qrcodes.mjs",
     "build:web": "node tools/build-web.mjs",
     "patch:android": "node tools/patch-android-manifest.mjs",
+    "patch:android-version": "node tools/patch-android-version.mjs",
     "cap:init": "npx cap init InspecaoPostos br.com.inspecao.postos --web-dir www",
     "cap:add:android": "npm run build:web && npx cap add android",
-    "cap:sync": "npm run build:web && npx cap sync android && npm run patch:android",
+    "cap:sync": "npm run build:web && npx cap sync android && npm run patch:android && npm run patch:android-version",
     "cap:open": "npx cap open android"
   },
   "dependencies": {

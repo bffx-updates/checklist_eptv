@@ -66,6 +66,14 @@ No Android Studio, gere o APK pelo menu de build.
 Também há um workflow do GitHub Actions que gera o APK debug automaticamente ao publicar na branch `main`.
 O APK fica disponível em `Releases > APK de teste`.
 
+O APK carrega a versão web publicada em GitHub Pages:
+
+```text
+https://bffx-updates.github.io/checklist_eptv/login.html
+```
+
+Com isso, alterações de tela, CSS e JavaScript publicadas na branch `main` atualizam o app instalado sem precisar reinstalar o APK. Só será necessário instalar um novo APK quando mudar algo nativo, como permissões, pacote Android ou plugins Capacitor.
+
 ## Gerar QR Codes
 
 Cada QR Code deve conter apenas o código do posto, por exemplo `P001`.

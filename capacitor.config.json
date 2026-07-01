@@ -3,6 +3,7 @@
   "appName": "Inspeção Postos",
   "webDir": "www",
   "server": {
+    "url": "https://bffx-updates.github.io/checklist_eptv/login.html",
     "androidScheme": "https"
   }
 }

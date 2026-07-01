@@ -44,6 +44,9 @@ jobs:
       - name: Add Android permissions
         run: npm run patch:android
 
+      - name: Set Android version
+        run: npm run patch:android-version
+
       - name: Build debug APK
         working-directory: android
         run: |

@@ -1,4 +1,4 @@
-const CACHE_NAME = "inspecao-postos-v15";
+const CACHE_NAME = "inspecao-postos-v16";
 const APP_SHELL = [
   "./",
   "./login.html",
@@ -51,6 +51,16 @@ self.addEventListener("fetch", (event) => {
   if (request.method !== "GET") return;
   if (url.hostname.includes("googleapis.com") && !url.hostname.includes("gstatic.com")) return;
 
+  const shouldPreferNetwork =
+    request.mode === "navigate" ||
+    ["document", "script", "style"].includes(request.destination) ||
+    url.pathname.endsWith("/app-version.json");
+
+  if (shouldPreferNetwork) {
+    event.respondWith(networkFirst(request));
+    return;
+  }
+
   event.respondWith(
     caches.match(request).then((cached) => {
       const network = fetch(request)
@@ -66,3 +76,16 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
+
+async function networkFirst(request) {
+  const cache = await caches.open(CACHE_NAME);
+  try {
+    const response = await fetch(request);
+    if (response.ok || response.type === "opaque") {
+      cache.put(request, response.clone());
+    }
+    return response;
+  } catch {
+    return (await caches.match(request)) || caches.match("./login.html");
+  }
+}

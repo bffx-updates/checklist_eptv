@@ -1,5 +1,9 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
+
+const execFileAsync = promisify(execFile);
 
 const outputDir = path.resolve("www");
 const files = [
@@ -38,4 +42,29 @@ for (const file of files) {
   }
 }
 
+await fs.writeFile(
+  path.join(outputDir, "app-version.json"),
+  JSON.stringify(await createAppVersion(), null, 2)
+);
+
 console.log(`PWA copiado para ${outputDir}`);
+
+async function createAppVersion() {
+  const commit = process.env.GITHUB_SHA || (await getGitCommit());
+  const builtAt = new Date().toISOString();
+
+  return {
+    version: `${commit}-${builtAt}`,
+    commit,
+    builtAt
+  };
+}
+
+async function getGitCommit() {
+  try {
+    const { stdout } = await execFileAsync("git", ["rev-parse", "--short", "HEAD"]);
+    return stdout.trim();
+  } catch {
+    return "local";
+  }
+}

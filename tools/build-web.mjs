@@ -6,6 +6,7 @@ const files = [
   "assets",
   "css",
   "js",
+  "chamado.html",
   "checklist.html",
   "configuracoes.html",
   "dashboard.html",

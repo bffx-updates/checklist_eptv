@@ -1,14 +1,14 @@
-const CACHE_NAME = "inspecao-postos-v6";
+const CACHE_NAME = "inspecao-postos-v10";
 const APP_SHELL = [
   "./",
   "./login.html",
   "./index.html",
   "./scanner.html",
   "./posto.html",
+  "./chamado.html",
   "./checklist.html",
   "./historico.html",
   "./senha.html",
-  "./dashboard.html",
   "./configuracoes.html",
   "./css/styles.css",
   "./firebase-config.js",
@@ -20,11 +20,11 @@ const APP_SHELL = [
   "./js/home.js",
   "./js/scanner.js",
   "./js/posto.js",
+  "./js/chamado.js",
   "./js/checklist.js",
   "./js/checklist-icons.js",
   "./js/historico.js",
   "./js/senha.js",
-  "./js/dashboard.js",
   "./js/configuracoes.js",
   "./manifest.webmanifest",
   "./assets/icon.svg"

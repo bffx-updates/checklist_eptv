@@ -9,14 +9,34 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/tecnicos/$(request.auth.uid)).data;
     }
 
+    function hasProfile() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/tecnicos/$(request.auth.uid));
+    }
+
     function isSupervisor() {
       return signedIn()
         && (request.auth.token.email == "supervisor@postos.local"
-          || profile().nivel == "supervisor");
+          || (hasProfile() && profile().nivel == "supervisor"));
+    }
+
+    function isNivel1() {
+      return signedIn()
+        && (request.auth.token.email in [
+            "rafael.pedro@postos.local",
+            "luiz.bueno@postos.local",
+            "ederson.matias@postos.local",
+            "vinicius.felix@postos.local"
+          ]
+          || (hasProfile() && profile().nivel == "nivel1"));
+    }
+
+    function canAccessPostoCode(postoCode) {
+      return isSupervisor() || !isNivel1() || postoCode == "P001";
     }
 
     match /postos/{postoId} {
-      allow read: if signedIn();
+      allow read: if signedIn() && canAccessPostoCode(postoId);
       allow write: if isSupervisor();
     }
 
@@ -27,9 +47,9 @@ service cloud.firestore {
 
     match /visitas/{visitaId} {
       allow create: if signedIn()
-        && request.resource.data.tecnico.uid == request.auth.uid;
-      allow read: if isSupervisor()
-        || (signedIn() && resource.data.tecnico.uid == request.auth.uid);
+        && request.resource.data.tecnico.uid == request.auth.uid
+        && canAccessPostoCode(request.resource.data.posto.codigo);
+      allow read: if signedIn() && canAccessPostoCode(resource.data.posto.codigo);
       allow update, delete: if isSupervisor();
     }
   }

@@ -1,4 +1,4 @@
-import { getPosto } from "./firebase-service.js";
+import { getPostoByAccess } from "./firebase-service.js";
 import { $, bindShell, normalizePostoCode, requireAuth, showToast } from "./ui.js";
 
 const { profile } = await requireAuth();
@@ -18,9 +18,9 @@ manualForm.addEventListener("submit", async (event) => {
 
 async function openPosto(value) {
   const codigo = normalizePostoCode(value);
-  const posto = await getPosto(codigo);
+  const posto = await getPostoByAccess(codigo, profile);
   if (!posto) {
-    showToast("Posto não encontrado.", "error");
+    showToast("Posto não encontrado ou fora do seu nível de acesso.", "error");
     return;
   }
   location.href = `posto.html?posto=${encodeURIComponent(posto.codigo)}`;

@@ -1,3 +1,13 @@
+export const POSTO_RIBEIRAO_PRETO = "P001";
+export const TECNICOS_NIVEL_1 = [
+  "Rafael Pedro",
+  "Luiz Bueno",
+  "Ederson Matias",
+  "Vinicius Felix"
+];
+
+const tecnicosNivel1Slugs = new Set(TECNICOS_NIVEL_1.map(slugify));
+
 export const tecnicosBase = [
   "Carlos Dalsin",
   "Rhony Sobrani",
@@ -9,14 +19,19 @@ export const tecnicosBase = [
   "Luiz Bueno",
   "Ederson Matias",
   "Rafael Pedro",
+  "Vinicius Felix",
   "Jaime Borges"
-].map((nome) => ({
-  nome,
-  ativo: true,
-  nivel: "tecnico",
-  telefone: "",
-  email: `${slugify(nome)}@postos.local`
-}));
+].map((nome) => {
+  const nivel = isTecnicoNivel1({ nome }) ? "nivel1" : "nivel2";
+  return {
+    nome,
+    ativo: true,
+    nivel,
+    postosPermitidos: nivel === "nivel1" ? [POSTO_RIBEIRAO_PRETO] : ["*"],
+    telefone: "",
+    email: `${slugify(nome)}@postos.local`
+  };
+});
 
 export const postosBase = [
   ["P001", "Ribeirão Preto"],
@@ -83,4 +98,50 @@ export function slugify(value) {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, ".")
     .replace(/(^\.|\.$)/g, "");
+}
+
+export function isSupervisorProfile(profile) {
+  return profile?.nivel === "supervisor";
+}
+
+export function isTecnicoNivel1(tecnico) {
+  const nomeSlug = slugify(tecnico?.nome || tecnico?.displayName || "");
+  const emailSlug = slugify(String(tecnico?.email || "").replace(/@.*/, ""));
+  return tecnicosNivel1Slugs.has(nomeSlug) || tecnicosNivel1Slugs.has(emailSlug);
+}
+
+export function resolveTecnicoNivel(tecnico) {
+  if (isSupervisorProfile(tecnico)) return "supervisor";
+  if (isTecnicoNivel1(tecnico)) return "nivel1";
+  if (tecnico?.nivel === "nivel1") return "nivel1";
+  return "nivel2";
+}
+
+export function withAccessProfile(profile) {
+  if (!profile) return null;
+  const nivel = resolveTecnicoNivel(profile);
+  if (nivel === "supervisor") return { ...profile, nivel };
+  return {
+    ...profile,
+    nivel,
+    postosPermitidos: nivel === "nivel1" ? [POSTO_RIBEIRAO_PRETO] : ["*"]
+  };
+}
+
+export function canAccessPosto(profile, postoOrCodigo) {
+  const codigo = typeof postoOrCodigo === "string" ? postoOrCodigo : postoOrCodigo?.codigo;
+  if (!codigo) return false;
+  const accessProfile = withAccessProfile(profile);
+  if (isSupervisorProfile(accessProfile)) return true;
+  if (accessProfile?.nivel === "nivel1") return codigo === POSTO_RIBEIRAO_PRETO;
+  return accessProfile?.nivel === "nivel2";
+}
+
+export function filterPostosByAccess(postos, profile) {
+  return postos.filter((posto) => canAccessPosto(profile, posto));
+}
+
+export function isTecnicoProfile(profile) {
+  const nivel = resolveTecnicoNivel(profile);
+  return nivel === "nivel1" || nivel === "nivel2";
 }

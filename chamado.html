@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#0B0F1D">
-    <title>Checklist | Inspeção Técnica</title>
+    <title>Chamado | Inspeção Técnica</title>
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,29 +28,22 @@
       <main class="content">
         <header class="page-head">
           <div>
-            <h1 id="posto-title">Checklist</h1>
+            <h1 id="posto-title">Chamado</h1>
             <p id="posto-city"></p>
           </div>
         </header>
 
-        <form id="checklist-form" class="form">
-          <section id="checklist-items"></section>
+        <form id="chamado-form" class="form">
           <section class="panel">
-            <h2>Fotos</h2>
-            <label class="field">
-              <span>Adicionar imagens</span>
-              <input id="fotos" class="input" type="file" accept="image/*" capture="environment" multiple>
-            </label>
-            <div id="photo-preview" class="photo-preview"></div>
-          </section>
-          <section class="panel">
-            <h2>Localização e observações</h2>
+            <h2>Ocorrência</h2>
             <div class="form">
-              <button id="capture-gps" class="secondary-button" type="button">Capturar GPS</button>
-              <div id="gps-output" class="empty-state">GPS ainda não capturado.</div>
               <label class="field">
-                <span>Observações gerais</span>
-                <textarea name="observacoes"></textarea>
+                <span>Motivo da ocorrência</span>
+                <textarea name="motivo" required></textarea>
+              </label>
+              <label class="field">
+                <span>Solução aplicada</span>
+                <textarea name="solucao" required></textarea>
               </label>
             </div>
           </section>
@@ -80,10 +73,10 @@
               </label>
             </div>
           </section>
-          <button class="button" type="submit">Salvar visita</button>
+          <button class="button" type="submit">Salvar chamado</button>
         </form>
       </main>
     </div>
-    <script type="module" src="js/checklist.js"></script>
+    <script type="module" src="js/chamado.js"></script>
   </body>
 </html>

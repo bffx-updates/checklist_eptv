@@ -21,7 +21,6 @@
           <a href="scanner.html">Ler QR Code</a>
           <a href="historico.html">Histórico</a>
           <a href="senha.html">Alterar senha</a>
-          <a href="dashboard.html" data-supervisor-only>Dashboard</a>
           <a href="configuracoes.html" data-supervisor-only>Configurações</a>
         </nav>
         <div class="sidebar__bottom"><button class="danger-button" data-logout>Sair</button></div>
@@ -32,9 +31,8 @@
           <header class="page-head">
             <div>
               <h1><span id="posto-codigo"></span> - <span id="posto-nome"></span></h1>
-              <p id="posto-cidade"></p>
+              <p>Posto identificado. Confira o histórico antes de iniciar o registro.</p>
             </div>
-            <a id="start-checklist" class="button" href="#">Iniciar checklist</a>
           </header>
           <div class="panel">
             <dl class="meta-grid">
@@ -44,6 +42,18 @@
               <div><dt>Endereço</dt><dd id="posto-endereco"></dd></div>
             </dl>
           </div>
+          <section class="panel">
+            <h2>Ações</h2>
+            <div class="button-grid button-grid--three">
+              <a id="start-chamado" class="button" href="#">Chamado</a>
+              <a id="start-preventiva" class="secondary-button" href="#">Preventiva</a>
+              <a class="secondary-button" href="scanner.html">Ler outro QR Code</a>
+            </div>
+          </section>
+          <section class="panel">
+            <h2>Histórico do posto</h2>
+            <div id="posto-history" class="visit-list"></div>
+          </section>
         </section>
       </main>
     </div>

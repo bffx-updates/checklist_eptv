@@ -1,4 +1,5 @@
 import "./register-sw.js";
+import { isSupervisorProfile } from "./data.js";
 import { getCurrentProfile, logout, observeUser, syncPendingVisits } from "./firebase-service.js";
 
 export const $ = (selector, root = document) => root.querySelector(selector);
@@ -49,7 +50,7 @@ export async function requireAuth({ supervisor = false } = {}) {
         return;
       }
       const profile = await getCurrentProfile(user);
-      if (supervisor && profile?.nivel !== "supervisor") {
+      if (supervisor && !isSupervisorProfile(profile)) {
         location.href = "index.html";
         return;
       }
@@ -60,11 +61,13 @@ export async function requireAuth({ supervisor = false } = {}) {
 
 export function bindShell(profile) {
   setText("[data-user-name]", profile?.nome || profile?.email || "");
-  setText("[data-user-role]", profile?.nivel === "supervisor" ? "Supervisor" : "Técnico");
+  const roleLabel =
+    profile?.nivel === "supervisor" ? "Supervisor" : profile?.nivel === "nivel1" ? "Técnico nível 1" : "Técnico nível 2";
+  setText("[data-user-role]", roleLabel);
 
   const dashboardLinks = $$("[data-supervisor-only]");
   dashboardLinks.forEach((item) => {
-    item.hidden = profile?.nivel !== "supervisor";
+    item.hidden = !isSupervisorProfile(profile);
   });
 
   const logoutButton = $("[data-logout]");
@@ -117,11 +120,18 @@ export function renderVisitCard(visita) {
   const fotos = visita.fotos || [];
   const checklist = visita.checklist || [];
   const pendente = visita.status === "pendente";
+  const tipo = visita.tipo || (checklist.length ? "preventiva" : "registro");
+  const tipoLabel = tipo === "chamado" ? "Chamado" : tipo === "preventiva" ? "Preventiva" : "Registro";
   const postoCodigo = escapeHtml(visita.posto?.codigo || "-");
   const postoNome = escapeHtml(visita.posto?.nome || "-");
   const postoCidade = escapeHtml(visita.posto?.cidade || "-");
   const tecnicoNome = escapeHtml(visita.tecnico?.nome || "-");
   const observacoes = escapeHtml(visita.observacoes || "");
+  const chamadoMotivo = escapeHtml(visita.chamado?.motivo || "");
+  const chamadoSolucao = escapeHtml(visita.chamado?.solucao || "");
+  const supervisorCor = visita.supervisorStatus?.cor || "";
+  const supervisorDescricao = escapeHtml(visita.supervisorStatus?.descricao || "");
+  const supervisorLabel = statusColorLabel(supervisorCor);
 
   return `
     <article class="visit-card">
@@ -133,11 +143,29 @@ export function renderVisitCard(visita) {
         <span class="status ${pendente ? "status--pending" : "status--ok"}">${pendente ? "Pendente" : "Enviada"}</span>
       </div>
       <dl class="meta-grid">
+        <div><dt>Tipo</dt><dd>${tipoLabel}</dd></div>
         <div><dt>Técnico</dt><dd>${tecnicoNome}</dd></div>
         <div><dt>Cidade</dt><dd>${postoCidade}</dd></div>
         <div><dt>Checklist</dt><dd>${checklist.length} itens</dd></div>
         <div><dt>Fotos</dt><dd>${fotos.length}</dd></div>
+        <div><dt>Supervisor</dt><dd>${supervisorLabel}</dd></div>
       </dl>
+      ${
+        supervisorCor || supervisorDescricao
+          ? `<div class="supervisor-note">
+              <span class="posto-status-dot posto-status-dot--${escapeHtml(supervisorCor || "sem-status")}"></span>
+              <p>${supervisorDescricao || "Sem descrição para o supervisor."}</p>
+            </div>`
+          : ""
+      }
+      ${
+        tipo === "chamado"
+          ? `<div class="visit-card__text">
+              <p><strong>Motivo</strong><span>${chamadoMotivo || "-"}</span></p>
+              <p><strong>Solução</strong><span>${chamadoSolucao || "-"}</span></p>
+            </div>`
+          : ""
+      }
       ${observacoes ? `<p class="visit-card__obs">${observacoes}</p>` : ""}
       ${
         fotos.length
@@ -157,4 +185,11 @@ export function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+
+export function statusColorLabel(cor) {
+  if (cor === "verde") return "Verde";
+  if (cor === "amarelo") return "Amarelo";
+  if (cor === "vermelho") return "Vermelho";
+  return "Sem status";
 }

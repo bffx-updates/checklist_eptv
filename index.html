@@ -21,7 +21,6 @@
           <a href="scanner.html">Ler QR Code</a>
           <a href="historico.html">Histórico</a>
           <a href="senha.html">Alterar senha</a>
-          <a href="dashboard.html" data-supervisor-only>Dashboard</a>
           <a href="configuracoes.html" data-supervisor-only>Configurações</a>
         </nav>
         <div class="sidebar__bottom"><button class="danger-button" data-logout>Sair</button></div>
@@ -29,27 +28,13 @@
       <main class="content">
         <header class="page-head">
           <div>
-            <h1>Painel inicial</h1>
-            <p>Resumo operacional e acesso rápido às inspeções de campo.</p>
+            <h1>Iniciar atendimento</h1>
+            <p>Abra o leitor de QR Code para identificar o posto e registrar o serviço.</p>
           </div>
         </header>
 
-        <section class="stats-grid">
-          <article class="stat"><span>Postos</span><strong id="total-postos">0</strong></article>
-          <article class="stat"><span>Técnicos</span><strong id="total-tecnicos">0</strong></article>
-          <article class="stat"><span>Visitas hoje</span><strong id="visitas-hoje">0</strong></article>
-          <article class="stat"><span>Postos pendentes</span><strong id="postos-pendentes">0</strong></article>
-        </section>
-
-        <section class="panel">
-          <h2>Ações</h2>
-          <div class="button-grid">
-            <a class="button" href="scanner.html">Ler QR Code</a>
-            <a class="secondary-button" href="historico.html">Consultar histórico</a>
-            <a class="secondary-button" href="senha.html">Alterar senha</a>
-            <a class="secondary-button" href="dashboard.html" data-supervisor-only>Dashboard supervisor</a>
-            <a class="secondary-button" href="configuracoes.html" data-supervisor-only>Configurações</a>
-          </div>
+        <section class="start-panel">
+          <a class="button start-button" href="scanner.html">Iniciar</a>
         </section>
       </main>
     </div>

@@ -1,6 +1,6 @@
 import { checklistBase } from "./data.js";
 import { checklistIcons } from "./checklist-icons.js";
-import { getPosto, saveVisita } from "./firebase-service.js";
+import { getPostoByAccess, saveVisita } from "./firebase-service.js";
 import {
   $,
   bindShell,
@@ -15,7 +15,7 @@ const { profile } = await requireAuth();
 bindShell(profile);
 
 const params = new URLSearchParams(location.search);
-const posto = await getPosto(params.get("posto"));
+const posto = await getPostoByAccess(params.get("posto"), profile);
 const form = $("#checklist-form");
 const items = $("#checklist-items");
 const photoInput = $("#fotos");
@@ -95,28 +95,40 @@ form.addEventListener("submit", async (event) => {
     observacao: formData.get(`obs-${index}`) || ""
   }));
 
-  const result = await saveVisita({
-    posto: {
-      codigo: posto.codigo,
-      nome: posto.nome,
-      cidade: posto.cidade
-    },
-    tecnico: {
-      uid: profile.uid,
-      nome: profile.nome,
-      email: profile.email
-    },
-    data,
-    hora,
-    gps,
-    checklist,
-    observacoes: formData.get("observacoes") || "",
-    fotos
-  });
+  try {
+    const result = await saveVisita({
+      tipo: "preventiva",
+      posto: {
+        codigo: posto.codigo,
+        nome: posto.nome,
+        cidade: posto.cidade
+      },
+      tecnico: {
+        uid: profile.uid,
+        nome: profile.nome,
+        email: profile.email,
+        nivel: profile.nivel,
+        postosPermitidos: profile.postosPermitidos || []
+      },
+      data,
+      hora,
+      gps,
+      checklist,
+      supervisorStatus: {
+        cor: formData.get("supervisorStatus"),
+        descricao: formData.get("supervisorDescricao") || ""
+      },
+      observacoes: formData.get("observacoes") || "",
+      fotos
+    });
 
-  form.classList.remove("is-loading");
-  showToast(result.status === "enviada" ? "Visita enviada." : "Visita salva para sincronização.", "success");
-  window.setTimeout(() => {
-    location.href = "historico.html";
-  }, 900);
+    showToast(result.status === "enviada" ? "Preventiva enviada." : "Preventiva salva para sincronização.", "success");
+    window.setTimeout(() => {
+      location.href = `posto.html?posto=${encodeURIComponent(posto.codigo)}`;
+    }, 900);
+  } catch (error) {
+    showToast(error.message || "Não foi possível salvar a preventiva.", "error");
+  } finally {
+    form.classList.remove("is-loading");
+  }
 });

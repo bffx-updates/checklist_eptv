@@ -1,5 +1,13 @@
 import { firebaseConfig, firebaseIsConfigured } from "../firebase-config.js";
-import { postosBase, tecnicosBase, slugify } from "./data.js";
+import {
+  POSTO_RIBEIRAO_PRETO,
+  canAccessPosto,
+  filterPostosByAccess,
+  postosBase,
+  tecnicosBase,
+  slugify,
+  withAccessProfile
+} from "./data.js";
 import {
   listLocalHistory,
   listPendingVisits,
@@ -61,7 +69,7 @@ export async function login(email, password) {
           uid: `local-${slugify(tecnico?.nome || email)}`,
           email,
           displayName: tecnico?.nome || email,
-          nivel: "tecnico"
+          nivel: tecnico?.nivel || "nivel2"
         };
 
   localStorage.setItem(LOCAL_USER_KEY, JSON.stringify(localUser));
@@ -141,35 +149,35 @@ export async function getCurrentProfile(user) {
   if (!user) return null;
 
   if (!firebaseIsConfigured) {
-    return {
+    return withAccessProfile({
       uid: user.uid,
       nome: user.displayName || user.email,
       email: user.email,
-      nivel: user.nivel || "tecnico",
+      nivel: user.nivel || "nivel2",
       ativo: true
-    };
+    });
   }
 
   const { firestoreModule } = await ensureFirebase();
   const { collection, doc, getDoc, getDocs, limit, query, where } = firestoreModule;
   const direct = await getDoc(doc(db, "tecnicos", user.uid));
   if (direct.exists()) {
-    return { uid: user.uid, ...direct.data() };
+    return withAccessProfile({ uid: user.uid, ...direct.data() });
   }
 
   const result = await getDocs(query(collection(db, "tecnicos"), where("email", "==", user.email), limit(1)));
   if (!result.empty) {
     const first = result.docs[0];
-    return { uid: user.uid, id: first.id, ...first.data() };
+    return withAccessProfile({ uid: user.uid, id: first.id, ...first.data() });
   }
 
-  return {
+  return withAccessProfile({
     uid: user.uid,
     nome: user.displayName || user.email,
     email: user.email,
-    nivel: user.email === "supervisor@postos.local" ? "supervisor" : "tecnico",
+    nivel: user.email === "supervisor@postos.local" ? "supervisor" : "nivel2",
     ativo: true
-  };
+  });
 }
 
 export async function getPosto(codigo) {
@@ -204,13 +212,28 @@ export async function listPostos() {
   return postosBase;
 }
 
+export async function listPostosByAccess(profile) {
+  const accessProfile = withAccessProfile(profile);
+  if (accessProfile?.nivel === "nivel1") {
+    const posto = await getPosto(POSTO_RIBEIRAO_PRETO);
+    return posto ? [posto] : [];
+  }
+  return filterPostosByAccess(await listPostos(), accessProfile);
+}
+
+export async function getPostoByAccess(codigo, profile) {
+  const posto = await getPosto(codigo);
+  if (!posto || !canAccessPosto(profile, posto)) return null;
+  return posto;
+}
+
 export async function listTecnicos() {
   if (firebaseIsConfigured) {
     try {
       const { firestoreModule } = await ensureFirebase();
       const { collection, getDocs, orderBy, query } = firestoreModule;
       const snapshot = await getDocs(query(collection(db, "tecnicos"), orderBy("nome")));
-      return snapshot.docs.map((item) => ({ id: item.id, ...item.data() }));
+      return snapshot.docs.map((item) => withAccessProfile({ id: item.id, ...item.data() }));
     } catch {
       return tecnicosBase;
     }
@@ -250,6 +273,10 @@ export async function seedInitialData() {
 }
 
 export async function saveVisita(visit) {
+  if (!canAccessPosto(visit.tecnico, visit.posto)) {
+    throw new Error("Seu nível de acesso permite registrar apenas o posto Ribeirão Preto.");
+  }
+
   const enriched = {
     ...visit,
     localId: visit.localId || crypto.randomUUID(),
@@ -274,6 +301,10 @@ export async function saveVisita(visit) {
 }
 
 async function sendVisitToFirebase(visit) {
+  if (!canAccessPosto(visit.tecnico, visit.posto)) {
+    throw new Error("Seu nível de acesso permite registrar apenas o posto Ribeirão Preto.");
+  }
+
   const { firestoreModule } = await ensureFirebase();
   const { addDoc, collection, serverTimestamp } = firestoreModule;
   const fotosMetadata = (visit.fotos || []).map((foto, index) => ({
@@ -283,12 +314,15 @@ async function sendVisitToFirebase(visit) {
   }));
 
   const payload = {
+    tipo: visit.tipo || "preventiva",
     posto: visit.posto,
     tecnico: visit.tecnico,
     data: visit.data,
     hora: visit.hora,
     gps: visit.gps || null,
     observacoes: visit.observacoes || "",
+    chamado: visit.chamado || null,
+    supervisorStatus: visit.supervisorStatus || null,
     checklist: visit.checklist || [],
     fotos: fotosMetadata,
     fotosLocalOnly: true,
@@ -328,8 +362,11 @@ export async function listVisitas(filters = {}) {
   if (firebaseIsConfigured) {
     try {
       const { firestoreModule } = await ensureFirebase();
-      const { collection, getDocs, limit, orderBy, query } = firestoreModule;
-      const snapshot = await getDocs(query(collection(db, "visitas"), orderBy("createdAt", "desc"), limit(300)));
+      const { collection, getDocs, limit, orderBy, query, where } = firestoreModule;
+      const constraints = filters.posto
+        ? [where("posto.codigo", "==", filters.posto), limit(300)]
+        : [orderBy("createdAt", "desc"), limit(300)];
+      const snapshot = await getDocs(query(collection(db, "visitas"), ...constraints));
       visitas = snapshot.docs.map((item) => ({ id: item.id, ...item.data(), status: item.data().status || "enviada" }));
     } catch {
       visitas = await listLocalHistory();

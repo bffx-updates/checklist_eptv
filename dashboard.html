@@ -16,21 +16,13 @@
       <aside class="sidebar">
         <div class="brand"><strong>Inspeção Técnica</strong><span>Retransmissão</span></div>
         <div class="user-chip"><strong data-user-name></strong><span data-user-role></span></div>
-        <nav class="nav">
-          <a href="index.html">Início</a>
-          <a href="scanner.html">Ler QR Code</a>
-          <a href="historico.html">Histórico</a>
-          <a href="senha.html">Alterar senha</a>
-          <a href="dashboard.html" aria-current="page" data-supervisor-only>Dashboard</a>
-          <a href="configuracoes.html" data-supervisor-only>Configurações</a>
-        </nav>
         <div class="sidebar__bottom"><button class="danger-button" data-logout>Sair</button></div>
       </aside>
       <main class="content">
         <header class="page-head">
           <div>
             <h1>Dashboard</h1>
-            <p>Resumo geral, filtros e últimas visitas registradas.</p>
+            <p>Visualização dos serviços feitos, status dos postos e observações para acompanhamento.</p>
           </div>
         </header>
 
@@ -40,6 +32,11 @@
           <article class="stat"><span>Visitas hoje</span><strong id="dash-hoje">0</strong></article>
           <article class="stat"><span>Postos pendentes</span><strong id="dash-pendentes">0</strong></article>
           <article class="stat"><span>Alertas</span><strong id="dash-alertas">0</strong></article>
+        </section>
+
+        <section class="panel">
+          <h2>Status dos postos</h2>
+          <div id="postos-status-grid" class="postos-status-grid"></div>
         </section>
 
         <section class="panel">
@@ -60,9 +57,11 @@
                 <tr>
                   <th>Data</th>
                   <th>Hora</th>
+                  <th>Serviço</th>
                   <th>Técnico</th>
                   <th>Posto</th>
-                  <th>Status</th>
+                  <th>Supervisor</th>
+                  <th>Envio</th>
                   <th>Fotos</th>
                 </tr>
               </thead>

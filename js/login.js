@@ -8,6 +8,7 @@ const userSelect = $("#user-select");
 const userPickerButton = $("#user-picker-button");
 const userPickerMenu = $("#user-picker-menu");
 const firebaseStatus = $("#firebase-status");
+const nextUrl = getSafeNextUrl(new URLSearchParams(location.search).get("next"));
 
 firebaseStatus.textContent = isFirebaseReady()
   ? "Senha inicial: 123456. Depois altere para sua senha pessoal."
@@ -60,7 +61,7 @@ function selectLoginUser(user) {
 }
 
 observeUser((user) => {
-  if (user) location.href = "index.html";
+  if (user) location.href = nextUrl || "index.html";
 });
 
 form.addEventListener("submit", async (event) => {
@@ -68,10 +69,15 @@ form.addEventListener("submit", async (event) => {
   form.classList.add("is-loading");
   try {
     await login(userSelect.value, password.value);
-    location.href = "index.html";
+    location.href = nextUrl || "index.html";
   } catch (error) {
     showToast(error.message || "Não foi possível entrar.", "error");
   } finally {
     form.classList.remove("is-loading");
   }
 });
+
+function getSafeNextUrl(value) {
+  if (!value || value.startsWith("login.html")) return "";
+  return /^[a-z0-9-]+\.html(?:\?.*)?$/i.test(value) ? value : "";
+}

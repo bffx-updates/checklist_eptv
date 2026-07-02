@@ -17,25 +17,29 @@
         <div class="brand"><strong>Inspeção Técnica</strong><span>Retransmissão</span></div>
         <div class="user-chip"><strong data-user-name></strong><span data-user-role></span></div>
         <nav class="nav">
-          <a href="index.html" aria-current="page">Início</a>
-          <a href="scanner.html">Ler QR Code</a>
-          <a href="historico.html">Histórico</a>
-          <a href="senha.html">Alterar senha</a>
           <a href="configuracoes.html" data-supervisor-only>Configurações</a>
         </nav>
-        <div class="sidebar__bottom"><button class="danger-button" data-logout>Sair</button></div>
       </aside>
       <main class="content">
         <header class="page-head">
           <div>
-            <h1>Iniciar atendimento</h1>
-            <p>Abra o leitor de QR Code para identificar o posto e registrar o serviço.</p>
+            <h1 id="home-user-name"></h1>
           </div>
         </header>
 
-        <section class="start-panel">
-          <a class="button start-button" href="scanner.html">Iniciar</a>
+        <section class="panel actions-card">
+          <h2>Ações</h2>
+          <div class="primary-action">
+            <a class="button" href="scanner.html">Iniciar</a>
+            <a class="secondary-button" href="configuracoes.html" data-supervisor-only>Configurações</a>
+          </div>
         </section>
+
+        <div class="quick-links">
+          <a class="small-button" href="historico.html">Histórico</a>
+          <a class="small-button" href="senha.html">Alterar senha</a>
+          <button class="small-button small-button--danger" type="button" data-logout>Sair</button>
+        </div>
       </main>
     </div>
     <script type="module" src="js/home.js"></script>

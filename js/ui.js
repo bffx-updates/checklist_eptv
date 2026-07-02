@@ -46,7 +46,8 @@ export async function requireAuth({ supervisor = false } = {}) {
   return new Promise((resolve) => {
     observeUser(async (user) => {
       if (!user) {
-        location.href = "login.html";
+        const currentPage = `${location.pathname.split("/").pop() || "index.html"}${location.search}`;
+        location.href = `login.html?next=${encodeURIComponent(currentPage)}`;
         return;
       }
       const profile = await getCurrentProfile(user);
@@ -70,13 +71,13 @@ export function bindShell(profile) {
     item.hidden = !isSupervisorProfile(profile);
   });
 
-  const logoutButton = $("[data-logout]");
-  if (logoutButton) {
+  const logoutButtons = $$("[data-logout]");
+  logoutButtons.forEach((logoutButton) => {
     logoutButton.addEventListener("click", async () => {
       await logout();
       location.href = "login.html";
     });
-  }
+  });
 
   syncPendingVisits().catch(() => {});
 }

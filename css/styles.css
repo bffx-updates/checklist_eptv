@@ -537,6 +537,58 @@ textarea {
   font-size: 22px;
 }
 
+.actions-card {
+  max-width: 620px;
+}
+
+.primary-action {
+  display: grid;
+  gap: 12px;
+}
+
+.primary-action .button {
+  min-height: 72px;
+  font-size: 22px;
+}
+
+.quick-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  max-width: 620px;
+  margin-top: 12px;
+}
+
+.small-button {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 12px;
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 9px;
+  background: rgb(255 255 255 / 5%);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.small-button:hover {
+  background: rgb(255 255 255 / 10%);
+  color: var(--text);
+}
+
+.small-button--danger {
+  border-color: rgb(224 91 91 / 40%);
+  background: rgb(224 91 91 / 10%);
+  color: #F29A9A;
+}
+
+.small-button--danger:hover {
+  background: rgb(224 91 91 / 18%);
+  color: #FFD1D1;
+}
+
 /* ── Cards e painéis ─────────────────────── */
 
 .stats-grid {

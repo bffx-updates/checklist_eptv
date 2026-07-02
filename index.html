@@ -3,43 +3,53 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#0B0F1D">
+    <meta name="theme-color" content="#FFF9F1">
     <title>Inspeção Técnica</title>
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
   </head>
-  <body>
+  <body class="app-page home-page">
     <div class="app-shell">
       <aside class="sidebar">
         <div class="brand"><strong>Inspeção Técnica</strong><span>Retransmissão</span></div>
         <div class="user-chip"><strong data-user-name></strong><span data-user-role></span></div>
-        <nav class="nav">
-          <a href="configuracoes.html" data-supervisor-only>Configurações</a>
-        </nav>
       </aside>
       <main class="content">
-        <header class="page-head">
-          <div>
-            <h1 id="home-user-name"></h1>
-          </div>
+        <header class="home-hero">
+          <div class="avatar" id="home-avatar">EP</div>
+          <h1 class="home-greeting" id="home-greeting">Olá</h1>
         </header>
+        <p class="home-sub" id="home-sub"></p>
 
-        <section class="panel actions-card">
-          <h2>Ações</h2>
+        <a class="big-action" href="scanner.html">
+          <div class="big-action__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+              <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+              <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+              <path d="M14 14h3v3h-3zM20 14h1M14 20h1M20 20h1"></path>
+            </svg>
+          </div>
+          <div class="big-action__text">
+            <strong>Iniciar visita</strong>
+            <span>Ler o QR Code do posto</span>
+          </div>
+        </a>
+
+        <div class="home-tiles">
+          <div class="home-tile"><strong id="tile-count">–</strong><span>visitas no mês</span></div>
+          <div class="home-tile"><strong id="tile-status">–</strong><span>última visita</span></div>
+        </div>
+
+        <section class="panel actions-card" data-supervisor-only hidden>
+          <h2>Supervisão</h2>
           <div class="primary-action">
-            <a class="button" href="scanner.html">Iniciar</a>
-            <a class="secondary-button" href="configuracoes.html" data-supervisor-only>Configurações</a>
+            <a class="secondary-button" href="configuracoes.html">Configurações</a>
           </div>
         </section>
-
-        <div class="quick-links">
-          <a class="small-button" href="historico.html">Histórico</a>
-          <a class="small-button" href="senha.html">Alterar senha</a>
-          <button class="small-button small-button--danger" type="button" data-logout>Sair</button>
-        </div>
       </main>
     </div>
     <script type="module" src="js/home.js"></script>

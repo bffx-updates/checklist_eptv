@@ -1,4 +1,3 @@
-import { isTecnicoProfile } from "./data.js";
 import { listPostos, listTecnicos, listVisitas } from "./firebase-service.js";
 import { $, bindShell, escapeHtml, formatDate, requireAuth, setText, statusColorLabel } from "./ui.js";
 
@@ -10,7 +9,18 @@ const tableBody = $("#visits-table tbody");
 const details = $("#visit-details");
 const postoSelect = $("#filter-posto");
 const tecnicoSelect = $("#filter-tecnico");
-const postosStatusGrid = $("#postos-status-grid");
+const board = $("#ops-board");
+const feedEl = $("#ops-feed");
+const tickerEl = $("#ops-ticker");
+const ringArc = $("#ring-arc");
+
+const RING_CIRC = 2 * Math.PI * 54;
+const COLUMNS = [
+  { key: "vermelho", label: "Crítico" },
+  { key: "amarelo", label: "Atenção" },
+  { key: "pendente", label: "Pendente" },
+  { key: "verde", label: "OK" }
+];
 
 const [postos, tecnicos] = await Promise.all([listPostos(), listTecnicos()]);
 
@@ -22,10 +32,115 @@ tecnicoSelect.innerHTML = `<option value="">Todos os técnicos</option>${tecnico
   .map((tecnico) => `<option value="${tecnico.nome}">${tecnico.nome}</option>`)
   .join("")}`;
 
-filtersForm.addEventListener("input", renderDashboard);
-await renderDashboard();
+if (ringArc) ringArc.setAttribute("stroke-dasharray", String(RING_CIRC));
+startClock();
 
-async function renderDashboard() {
+filtersForm.addEventListener("input", renderTable);
+await Promise.all([renderOps(), renderTable()]);
+
+async function renderOps() {
+  const todas = await listVisitas();
+  const ultimas = latestVisitsByPosto(todas);
+
+  const buckets = { vermelho: [], amarelo: [], pendente: [], verde: [] };
+  for (const posto of postos) {
+    const cor = ultimas.get(posto.codigo)?.supervisorStatus?.cor;
+    const bucket = cor === "vermelho" || cor === "amarelo" || cor === "verde" ? cor : "pendente";
+    buckets[bucket].push(posto);
+  }
+
+  setText("#dash-verde", buckets.verde.length);
+  setText("#dash-amarelo", buckets.amarelo.length);
+  setText("#dash-vermelho", buckets.vermelho.length);
+  setText("#dash-pendente", buckets.pendente.length);
+
+  const mesAtual = new Date().toISOString().slice(0, 7);
+  const hoje = new Date().toISOString().slice(0, 10);
+  const visitadosMes = new Set(
+    todas.filter((visita) => String(visita.data || "").startsWith(mesAtual)).map((visita) => visita.posto?.codigo).filter(Boolean)
+  );
+  const visitasHoje = todas.filter((visita) => visita.data === hoje).length;
+  const pct = postos.length ? Math.round((visitadosMes.size / postos.length) * 100) : 0;
+  setRing(pct);
+
+  const dataLabel = new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" });
+  setText(
+    "#ops-subtitle",
+    `${postos.length} postos monitorados · ${dataLabel.charAt(0).toUpperCase() + dataLabel.slice(1)} · ${visitasHoje} visitas hoje`
+  );
+
+  board.innerHTML = COLUMNS.map(({ key, label }) => renderColumn(key, label, buckets[key], ultimas)).join("");
+
+  feedEl.innerHTML = todas.length
+    ? todas.slice(0, 6).map(renderFeedItem).join("")
+    : `<div class="ops-feed__item"><div><strong>Sem registros ainda</strong><span>Aguardando visitas</span></div></div>`;
+
+  const alertas = [...buckets.vermelho, ...buckets.amarelo].map((posto) => {
+    const cor = ultimas.get(posto.codigo)?.supervisorStatus?.cor;
+    return `${posto.codigo} ${posto.nome}: ${cor === "vermelho" ? "status crítico" : "requer atenção"}`;
+  });
+  const tickerText = (alertas.length ? alertas.join("   ·   ") : "Todos os postos sob controle") + "   ·   ";
+  tickerEl.innerHTML = `<span>${escapeHtml(tickerText)}</span><span>${escapeHtml(tickerText)}</span>`;
+}
+
+function renderColumn(key, label, list, ultimas) {
+  const chips = list
+    .map((posto) => {
+      const visita = ultimas.get(posto.codigo);
+      const info = key === "pendente" ? "sem visita" : relativeDays(visita?.data);
+      return `<div class="ops-chip"><strong>${escapeHtml(posto.codigo)}</strong><span>${escapeHtml(posto.nome)} · ${escapeHtml(info)}</span></div>`;
+    })
+    .join("");
+  return `
+    <section class="ops-col ops-col--${key}">
+      <div class="ops-col__head"><i></i><strong>${label}</strong><b>${list.length}</b></div>
+      <div class="ops-col__list">${chips || `<div class="ops-chip"><span>Nenhum posto</span></div>`}</div>
+    </section>
+  `;
+}
+
+function renderFeedItem(visita) {
+  const cor = visita.supervisorStatus?.cor;
+  const dot =
+    cor === "verde" ? "#1FA35C" : cor === "amarelo" ? "#D99000" : cor === "vermelho" ? "#E23D3D" : "#7C8499";
+  return `
+    <div class="ops-feed__item">
+      <i style="background:${dot}"></i>
+      <div>
+        <strong>${escapeHtml(visita.tecnico?.nome || "-")}</strong>
+        <span>${serviceLabel(visita)} · ${escapeHtml(visita.posto?.codigo || "-")}</span>
+      </div>
+      <em>${escapeHtml(visita.hora || formatDate(visita.data) || "")}</em>
+    </div>
+  `;
+}
+
+function setRing(pct) {
+  const clamped = Math.max(0, Math.min(100, pct));
+  if (ringArc) ringArc.setAttribute("stroke-dashoffset", String(RING_CIRC - (clamped / 100) * RING_CIRC));
+  setText("#ring-pct", `${clamped}%`);
+}
+
+function relativeDays(dateStr) {
+  if (!dateStr) return "—";
+  const then = new Date(`${dateStr}T00:00:00`);
+  if (Number.isNaN(then.getTime())) return "—";
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  const days = Math.floor((now.getTime() - then.getTime()) / 86400000);
+  if (days <= 0) return "hoje";
+  if (days === 1) return "ontem";
+  return `${days}d`;
+}
+
+function startClock() {
+  const tick = () =>
+    setText("#ops-clock", new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }));
+  tick();
+  window.setInterval(tick, 20000);
+}
+
+async function renderTable() {
   const data = new FormData(filtersForm);
   const filters = {
     posto: data.get("posto"),
@@ -39,26 +154,6 @@ async function renderDashboard() {
   });
 
   const visitas = await listVisitas(filters);
-  const todasVisitas = Object.keys(filters).length ? await listVisitas() : visitas;
-  const today = new Date().toISOString().slice(0, 10);
-  const visitasHoje = visitas.filter((visita) => visita.data === today);
-  const visitadosHoje = new Set(visitasHoje.map((visita) => visita.posto?.codigo));
-  const pendentes = visitas.filter((visita) => visita.status === "pendente");
-  const ultimasPorPosto = latestVisitsByPosto(todasVisitas);
-  const alertasSupervisor = postos.filter((posto) => {
-    const cor = ultimasPorPosto.get(posto.codigo)?.supervisorStatus?.cor;
-    return cor === "amarelo" || cor === "vermelho";
-  });
-
-  setText("#dash-postos", postos.length);
-  setText("#dash-tecnicos", tecnicos.filter((tecnico) => tecnico.ativo && isTecnicoProfile(tecnico)).length);
-  setText("#dash-hoje", visitasHoje.length);
-  setText("#dash-pendentes", Math.max(0, postos.length - visitadosHoje.size));
-  setText("#dash-alertas", alertasSupervisor.length + pendentes.length);
-
-  postosStatusGrid.innerHTML = postos
-    .map((posto) => renderPostoStatus(posto, ultimasPorPosto.get(posto.codigo)))
-    .join("");
 
   tableBody.innerHTML = visitas
     .slice(0, 80)
@@ -84,7 +179,9 @@ async function renderDashboard() {
     });
   });
 
-  details.innerHTML = visitas[0] ? renderServiceDetails(visitas[0]) : `<div class="empty-state">Nenhuma visita para exibir.</div>`;
+  details.innerHTML = visitas[0]
+    ? renderServiceDetails(visitas[0])
+    : `<div class="empty-state">Nenhuma visita para exibir.</div>`;
 }
 
 function latestVisitsByPosto(visitas) {
@@ -95,23 +192,6 @@ function latestVisitsByPosto(visitas) {
     map.set(codigo, visita);
   }
   return map;
-}
-
-function renderPostoStatus(posto, visita) {
-  const cor = visita?.supervisorStatus?.cor || "sem-status";
-  const descricao = visita?.supervisorStatus?.descricao || "Sem visita registrada.";
-  const tecnico = visita?.tecnico?.nome || "-";
-  const data = visita?.data ? `${formatDate(visita.data)} ${visita.hora || ""}` : "-";
-  return `
-    <article class="posto-status-card">
-      <div class="posto-status-card__head">
-        <span class="posto-status-dot posto-status-dot--${escapeHtml(cor)}" title="${statusColorLabel(cor)}"></span>
-        <strong>${escapeHtml(posto.codigo)} - ${escapeHtml(posto.nome)}</strong>
-      </div>
-      <p>${escapeHtml(descricao)}</p>
-      <small>${escapeHtml(tecnico)} · ${escapeHtml(data)}</small>
-    </article>
-  `;
 }
 
 function renderServiceDetails(visita) {

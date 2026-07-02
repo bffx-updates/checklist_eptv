@@ -3,51 +3,46 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#0B0F1D">
+    <meta name="theme-color" content="#FFF9F1">
     <title>Posto | Inspeção Técnica</title>
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
   </head>
-  <body>
+  <body class="app-page">
     <div class="app-shell">
       <aside class="sidebar">
         <div class="brand"><strong>Inspeção Técnica</strong><span>Retransmissão</span></div>
         <div class="user-chip"><strong data-user-name></strong><span data-user-role></span></div>
-        <nav class="nav">
-          <a href="historico.html">Histórico</a>
-          <a href="senha.html">Alterar senha</a>
-          <a href="configuracoes.html" data-supervisor-only>Configurações</a>
-        </nav>
-        <div class="sidebar__bottom"><button class="danger-button" data-logout>Sair</button></div>
       </aside>
       <main class="content">
         <div class="empty-state" hidden>Posto não encontrado.</div>
         <section class="posto-view" hidden>
-          <header class="page-head">
-            <div>
-              <h1><span id="posto-codigo"></span> - <span id="posto-nome"></span></h1>
-              <p>Posto identificado. Confira o histórico antes de iniciar o registro.</p>
-            </div>
-          </header>
-          <div class="panel">
-            <dl class="meta-grid">
-              <div><dt>Código</dt><dd id="posto-codigo-meta"></dd></div>
-              <div><dt>Status</dt><dd id="posto-status"></dd></div>
-              <div><dt>Cidade</dt><dd id="posto-cidade-meta"></dd></div>
-              <div><dt>Endereço</dt><dd id="posto-endereco"></dd></div>
-            </dl>
-          </div>
-          <section class="panel">
-            <h2>Ações</h2>
-            <div class="button-grid button-grid--three">
-              <a id="start-chamado" class="button" href="#">Chamado</a>
-              <a id="start-preventiva" class="secondary-button" href="#">Preventiva</a>
-              <a class="secondary-button" href="scanner.html">Ler outro QR Code</a>
-            </div>
+          <section class="posto-hero">
+            <div class="posto-hero__label">Posto identificado</div>
+            <div class="posto-hero__name"><span id="posto-codigo"></span><strong id="posto-nome"></strong></div>
+            <div class="posto-hero__pills" id="posto-pills"></div>
           </section>
+
+          <h2 class="section-title">O que você vai fazer aqui?</h2>
+          <div class="action-list">
+            <a id="start-preventiva" class="action-tile action-tile--primary" href="#">
+              <span class="action-tile__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11.5 11.5 14 16 9"></path><rect x="4" y="4" width="16" height="16" rx="4"></rect></svg>
+              </span>
+              <span class="action-tile__text"><strong>Preventiva</strong><small>Checklist completo · 10 itens</small></span>
+            </a>
+            <a id="start-chamado" class="action-tile" href="#">
+              <span class="action-tile__icon action-tile__icon--warn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8v5M12 16.5v.01"></path><path d="M10.3 3.8 2.9 17a2 2 0 0 0 1.7 3h14.8a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0Z"></path></svg>
+              </span>
+              <span class="action-tile__text"><strong>Chamado</strong><small>Registrar ocorrência e solução</small></span>
+            </a>
+            <a class="secondary-button" href="scanner.html">Ler outro QR Code</a>
+          </div>
+
           <section class="panel">
             <h2>Histórico do posto</h2>
             <div id="posto-history" class="visit-list"></div>

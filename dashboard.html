@@ -3,76 +3,92 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#0B0F1D">
-    <title>Dashboard | Inspeção Técnica</title>
+    <meta name="theme-color" content="#0C1122">
+    <title>Centro de operações | Inspeção Técnica</title>
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;1,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
   </head>
-  <body>
-    <div class="app-shell">
-      <aside class="sidebar">
-        <div class="brand"><strong>Inspeção Técnica</strong><span>Retransmissão</span></div>
-        <div class="user-chip"><strong data-user-name></strong><span data-user-role></span></div>
-        <div class="sidebar__bottom"><button class="danger-button" data-logout>Sair</button></div>
-      </aside>
-      <main class="content">
-        <header class="page-head">
-          <div>
-            <h1>Dashboard</h1>
-            <p>Visualização dos serviços feitos, status dos postos e observações para acompanhamento.</p>
-          </div>
-        </header>
+  <body class="dashboard-page ops">
+    <div class="ops-shell">
+      <header class="ops-top">
+        <div class="ops-logo"><span>EPTV</span></div>
+        <div class="ops-title">
+          <strong>Centro de operações · Retransmissão</strong>
+          <span id="ops-subtitle">postos monitorados</span>
+        </div>
+        <div class="ops-top__spacer"></div>
+        <span class="ops-live"><i></i>OPERANDO</span>
+        <span class="ops-clock" id="ops-clock">--:--</span>
+        <button class="ops-exit" type="button" data-logout>Sair</button>
+      </header>
 
-        <section class="stats-grid">
-          <article class="stat"><span>Postos</span><strong id="dash-postos">0</strong></article>
-          <article class="stat"><span>Técnicos</span><strong id="dash-tecnicos">0</strong></article>
-          <article class="stat"><span>Visitas hoje</span><strong id="dash-hoje">0</strong></article>
-          <article class="stat"><span>Postos pendentes</span><strong id="dash-pendentes">0</strong></article>
-          <article class="stat"><span>Alertas</span><strong id="dash-alertas">0</strong></article>
-        </section>
+      <div class="ops-body">
+        <aside class="ops-rail">
+          <section class="ops-card ops-ring-card">
+            <div class="ops-ring">
+              <div class="ops-ring__sweep"></div>
+              <svg width="190" height="190" viewBox="0 0 130 130" aria-hidden="true">
+                <circle cx="65" cy="65" r="54" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="9"></circle>
+                <circle id="ring-arc" cx="65" cy="65" r="54" fill="none" stroke="#1FA35C" stroke-width="9" stroke-linecap="round"></circle>
+              </svg>
+              <div class="ops-ring__pct"><strong id="ring-pct">0%</strong><span>cobertura<br>do mês</span></div>
+            </div>
+            <div class="ops-counters">
+              <div class="ops-counter ops-counter--verde"><strong id="dash-verde">0</strong><span>OK</span></div>
+              <div class="ops-counter ops-counter--amarelo"><strong id="dash-amarelo">0</strong><span>Atenção</span></div>
+              <div class="ops-counter ops-counter--vermelho"><strong id="dash-vermelho">0</strong><span>Crítico</span></div>
+              <div class="ops-counter ops-counter--pendente"><strong id="dash-pendente">0</strong><span>Pendente</span></div>
+            </div>
+          </section>
+          <section class="ops-card ops-feed">
+            <div class="ops-feed__head"><i></i> Últimos registros</div>
+            <div class="ops-feed__list" id="ops-feed"></div>
+          </section>
+        </aside>
 
-        <section class="panel">
-          <h2>Status dos postos</h2>
-          <div id="postos-status-grid" class="postos-status-grid"></div>
-        </section>
+        <main class="ops-board" id="ops-board"></main>
+      </div>
 
-        <section class="panel">
-          <form id="dashboard-filters" class="filters">
-            <select id="filter-tecnico" class="select" name="tecnico"></select>
-            <select id="filter-posto" class="select" name="posto"></select>
-            <input class="input" name="cidade" placeholder="Cidade">
-            <input class="input" name="data" type="date">
-            <select class="select" name="status">
-              <option value="">Todos os status</option>
-              <option value="enviada">Enviada</option>
-              <option value="pendente">Pendente</option>
-            </select>
-          </form>
-          <div class="table-wrap">
-            <table id="visits-table">
-              <thead>
-                <tr>
-                  <th>Data</th>
-                  <th>Hora</th>
-                  <th>Serviço</th>
-                  <th>Técnico</th>
-                  <th>Posto</th>
-                  <th>Supervisor</th>
-                  <th>Envio</th>
-                  <th>Fotos</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </section>
-
-        <section id="visit-details" class="visit-list"></section>
-      </main>
+      <div class="ops-ticker"><div class="ops-ticker__track" id="ops-ticker"></div></div>
     </div>
+
+    <section class="ops-details">
+      <h2>Registros detalhados</h2>
+      <section class="panel">
+        <form id="dashboard-filters" class="filters">
+          <select id="filter-tecnico" class="select" name="tecnico"></select>
+          <select id="filter-posto" class="select" name="posto"></select>
+          <input class="input" name="cidade" placeholder="Cidade">
+          <input class="input" name="data" type="date">
+          <select class="select" name="status">
+            <option value="">Todos os status</option>
+            <option value="enviada">Enviada</option>
+            <option value="pendente">Pendente</option>
+          </select>
+        </form>
+        <div class="table-wrap">
+          <table id="visits-table">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Hora</th>
+                <th>Serviço</th>
+                <th>Técnico</th>
+                <th>Posto</th>
+                <th>Supervisor</th>
+                <th>Envio</th>
+                <th>Fotos</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+      <section id="visit-details" class="visit-list"></section>
+    </section>
     <script type="module" src="js/dashboard.js"></script>
   </body>
 </html>

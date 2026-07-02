@@ -71,6 +71,8 @@ export function bindShell(profile) {
     item.hidden = !isSupervisorProfile(profile);
   });
 
+  bindAppFooter(profile);
+
   const logoutButtons = $$("[data-logout]");
   logoutButtons.forEach((logoutButton) => {
     logoutButton.addEventListener("click", async () => {
@@ -80,6 +82,26 @@ export function bindShell(profile) {
   });
 
   syncPendingVisits().catch(() => {});
+}
+
+function bindAppFooter(profile) {
+  if (location.pathname.endsWith("/dashboard.html") || $(".app-footer-actions")) return;
+
+  const content = $(".content");
+  if (!content) return;
+
+  const footer = document.createElement("footer");
+  footer.className = "quick-links app-footer-actions";
+  footer.innerHTML = `
+    <a class="small-button" href="historico.html">Histórico</a>
+    <a class="small-button" href="senha.html">Alterar senha</a>
+    <a class="small-button" href="configuracoes.html" data-supervisor-only>Configurações</a>
+    <button class="small-button small-button--danger" type="button" data-logout>Sair</button>
+  `;
+
+  const configLink = footer.querySelector("[data-supervisor-only]");
+  if (configLink) configLink.hidden = !isSupervisorProfile(profile);
+  content.appendChild(footer);
 }
 
 export async function fileToDataUrl(file, maxWidth = 1600) {

@@ -936,7 +936,9 @@ textarea {
 }
 
 .wiz-dots i.is-ok { background: var(--success); }
+.wiz-dots i.is-warn,
 .wiz-dots i.is-atencao { background: var(--warning); }
+.wiz-dots i.is-nc { background: var(--danger); }
 .wiz-dots i.is-na { background: #9AA1B2; }
 .wiz-dots i.is-current { background: var(--primary); }
 
@@ -970,6 +972,15 @@ textarea {
   height: 52px;
 }
 
+.wiz-rack {
+  margin-top: 14px;
+  font-size: 12.5px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
 .wiz-label {
   max-width: 340px;
   margin: 14px 0 0;
@@ -977,6 +988,10 @@ textarea {
   font-weight: 900;
   line-height: 1.2;
   text-wrap: balance;
+}
+
+.wiz-rack:not([hidden]) + .wiz-label {
+  margin-top: 4px;
 }
 
 .wiz-hint {
@@ -1047,6 +1062,65 @@ textarea {
   color: var(--muted);
 }
 
+.wiz-btn {
+  display: flex;
+  min-height: 60px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 2.5px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 18px;
+  font-weight: 900;
+  transition: transform 0.12s, background 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.wiz-btn:hover {
+  transform: translateY(-1px);
+}
+
+.wiz-btn--ok {
+  border-color: var(--success);
+  background: var(--success);
+  color: #fff;
+  box-shadow: 0 10px 22px rgb(31 163 92 / 28%);
+}
+
+.wiz-btn--ok.is-selected {
+  box-shadow: 0 0 0 4px rgb(31 163 92 / 22%), 0 10px 22px rgb(31 163 92 / 28%);
+}
+
+.wiz-btn--nc {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.wiz-btn--nc.is-selected {
+  background: var(--danger-soft);
+}
+
+.wiz-btn--warn {
+  border-color: var(--warning);
+  color: var(--warning);
+}
+
+.wiz-btn--warn.is-selected {
+  background: var(--warning-soft);
+}
+
+.wiz-btn--na {
+  border-color: var(--line);
+  color: var(--muted);
+}
+
+.wiz-btn--na.is-selected {
+  border-color: var(--faint);
+  background: var(--surface-2);
+  color: var(--text);
+}
+
 .checklist-summary {
   display: flex;
   flex-wrap: wrap;
@@ -1063,7 +1137,9 @@ textarea {
 }
 
 .sum-chip--ok { border-color: rgb(31 163 92 / 30%); background: var(--success-soft); color: var(--success); }
+.sum-chip--warn,
 .sum-chip--at { border-color: rgb(217 144 0 / 30%); background: var(--warning-soft); color: var(--warning); }
+.sum-chip--nc { border-color: rgb(226 61 61 / 30%); background: var(--danger-soft); color: var(--danger); }
 .sum-chip--na { color: var(--muted); }
 
 .quick-links {

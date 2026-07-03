@@ -1,9 +1,8 @@
-import { checklistBase } from "./data.js";
-import { checklistIcons } from "./checklist-icons.js";
+import { getChecklistForPosto } from "./data.js";
+import { checklistIcons, iconeRack } from "./checklist-icons.js";
 import { getPostoByAccess, saveVisita } from "./firebase-service.js";
 import {
   $,
-  $$,
   bindShell,
   escapeHtml,
   fileToDataUrl,
@@ -26,8 +25,9 @@ if (!posto) {
 }
 
 function runWizard(posto) {
-  const total = checklistBase.length;
-  const state = checklistBase.map(() => ({ status: null, observacao: "" }));
+  const items = getChecklistForPosto(posto.codigo);
+  const total = items.length;
+  const state = items.map(() => ({ value: null, label: "", tone: null, observacao: "" }));
   let index = 0;
   let fotos = [];
   let gps = null;
@@ -36,8 +36,10 @@ function runWizard(posto) {
   const finishForm = $("#checklist-form");
   const stage = $("#wiz-stage");
   const iconEl = $("#wiz-icon");
+  const rackEl = $("#wiz-rack");
   const labelEl = $("#wiz-label");
   const obsInput = $("#wiz-obs");
+  const actionsEl = $("#wiz-actions");
   const photoInput = $("#fotos");
   const photoPreview = $("#photo-preview");
   const gpsOutput = $("#gps-output");
@@ -46,28 +48,50 @@ function runWizard(posto) {
   setText("#posto-title", `${posto.codigo} · ${posto.nome}`);
   setText("#posto-city", posto.cidade || "");
 
-  $("#wiz-dots").innerHTML = checklistBase.map(() => "<i></i>").join("");
-  const dots = $$("#wiz-dots i");
+  $("#wiz-dots").innerHTML = items.map(() => "<i></i>").join("");
+  const dots = [...$("#wiz-dots").children];
 
   renderItem();
 
   function renderItem() {
+    const item = items[index];
     setText("#wiz-idx", index + 1);
-    iconEl.innerHTML = checklistIcons[index] || "";
-    labelEl.textContent = checklistBase[index];
+    iconEl.innerHTML = item.rack ? iconeRack : checklistIcons[index] || iconeRack;
+    rackEl.textContent = item.rack || "";
+    rackEl.hidden = !item.rack;
+    labelEl.textContent = item.label;
     obsInput.value = state[index].observacao || "";
+    renderOptions(item);
     dots.forEach((dot, i) => {
-      const status = state[i].status;
-      dot.className = i === index ? "is-current" : status ? `is-${status}` : "";
+      dot.className = i === index ? "is-current" : state[i].tone ? `is-${state[i].tone}` : "";
     });
     stage.classList.remove("is-anim");
     void stage.offsetWidth;
     stage.classList.add("is-anim");
   }
 
-  function mark(status) {
-    state[index].observacao = obsInput.value.trim();
-    state[index].status = status;
+  function renderOptions(item) {
+    actionsEl.innerHTML = item.opcoes
+      .map((opcao) => {
+        const selected = state[index].value === opcao.value ? " is-selected" : "";
+        return `<button type="button" class="wiz-btn wiz-btn--${opcao.tone}${selected}" data-value="${escapeHtml(opcao.value)}">${escapeHtml(opcao.label)}</button>`;
+      })
+      .join("");
+    actionsEl.querySelectorAll(".wiz-btn").forEach((button) => {
+      button.addEventListener("click", () => {
+        const opcao = item.opcoes.find((option) => option.value === button.dataset.value);
+        mark(opcao);
+      });
+    });
+  }
+
+  function mark(opcao) {
+    state[index] = {
+      value: opcao.value,
+      label: opcao.label,
+      tone: opcao.tone,
+      observacao: obsInput.value.trim()
+    };
     if (index >= total - 1) {
       goFinish();
     } else {
@@ -75,10 +99,6 @@ function runWizard(posto) {
       renderItem();
     }
   }
-
-  $$("[data-mark]").forEach((button) => {
-    button.addEventListener("click", () => mark(button.dataset.mark));
-  });
 
   $("#wiz-back").addEventListener("click", () => {
     state[index].observacao = obsInput.value.trim();
@@ -100,17 +120,24 @@ function runWizard(posto) {
   function goFinish() {
     wizardScreen.hidden = true;
     finishForm.hidden = false;
-    const counts = state.reduce((acc, item) => {
-      acc[item.status] = (acc[item.status] || 0) + 1;
-      return acc;
-    }, {});
-    $("#checklist-summary").innerHTML = `
-      <span class="sum-chip">${escapeHtml(posto.codigo)} · ${escapeHtml(posto.nome)}</span>
-      <span class="sum-chip sum-chip--ok">${counts.ok || 0} OK</span>
-      <span class="sum-chip sum-chip--at">${counts.atencao || 0} atenção</span>
-      <span class="sum-chip sum-chip--na">${counts.na || 0} N/A</span>
-    `;
+    renderSummary();
     window.scrollTo(0, 0);
+  }
+
+  function renderSummary() {
+    const ordemTone = { ok: 0, nc: 1, warn: 2, na: 3 };
+    const agrupado = new Map();
+    for (const item of state) {
+      if (!item.value) continue;
+      const atual = agrupado.get(item.label) || { count: 0, tone: item.tone };
+      atual.count += 1;
+      agrupado.set(item.label, atual);
+    }
+    const chips = [...agrupado.entries()]
+      .sort((a, b) => (ordemTone[a[1].tone] ?? 9) - (ordemTone[b[1].tone] ?? 9))
+      .map(([label, info]) => `<span class="sum-chip sum-chip--${info.tone}">${info.count} ${escapeHtml(label)}</span>`)
+      .join("");
+    $("#checklist-summary").innerHTML = `<span class="sum-chip">${escapeHtml(posto.codigo)} · ${escapeHtml(posto.nome)}</span>${chips}`;
   }
 
   $("#capture-gps").addEventListener("click", () => {
@@ -147,9 +174,11 @@ function runWizard(posto) {
 
     const formData = new FormData(finishForm);
     const { data, hora } = todayParts();
-    const checklist = checklistBase.map((label, i) => ({
-      item: label,
-      status: state[i].status,
+    const checklist = items.map((item, i) => ({
+      rack: item.rack || null,
+      item: item.label,
+      status: state[i].value,
+      statusLabel: state[i].label,
       observacao: state[i].observacao || ""
     }));
 

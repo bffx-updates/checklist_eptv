@@ -33,3 +33,8 @@ export const checklistIcons = [
   // 10. Segurança física e acesso ao posto — escudo com fechadura
   svg(`<path d="M12 3l7 2.7v5.3c0 4.6-2.9 7.9-7 10-4.1-2.1-7-5.4-7-10V5.7L12 3z"/><circle cx="12" cy="10.3" r="1.7"/><path d="M12 12v3"/>`)
 ];
+
+// Ícone genérico de rack/equipamento — usado no checklist por rack (ex.: P001).
+export const iconeRack = svg(
+  `<rect x="4" y="3.5" width="16" height="17" rx="2"/><path d="M4 9h16M4 14.5h16"/><path d="M7 6.2h.01M7 11.7h.01M7 17.2h.01"/><path d="M10.5 6.2h6M10.5 11.7h6M10.5 17.2h6"/>`
+);

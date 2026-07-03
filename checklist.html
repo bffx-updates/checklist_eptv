@@ -30,20 +30,12 @@
           <div class="wiz-dots" id="wiz-dots"></div>
           <div class="wiz-stage" id="wiz-stage">
             <div class="wiz-icon" id="wiz-icon"></div>
+            <div class="wiz-rack" id="wiz-rack" hidden></div>
             <h1 class="wiz-label" id="wiz-label"></h1>
             <p class="wiz-hint">Como está este item?</p>
             <input id="wiz-obs" class="input wiz-obs" placeholder="Observação do item (opcional)">
           </div>
-          <div class="wiz-actions">
-            <button class="wiz-ok" type="button" data-mark="ok">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"></path></svg>
-              Tudo OK
-            </button>
-            <div class="wiz-actions__row">
-              <button class="wiz-at" type="button" data-mark="atencao">Atenção</button>
-              <button class="wiz-na" type="button" data-mark="na">N/A</button>
-            </div>
-          </div>
+          <div class="wiz-actions" id="wiz-actions"></div>
         </section>
 
         <!-- Tela final: fotos, GPS, observações e status -->

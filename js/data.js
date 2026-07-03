@@ -91,6 +91,57 @@ export const checklistBase = [
   "Segurança física e acesso ao posto"
 ];
 
+// Conjuntos de resposta usados pelos itens do checklist.
+export const OPCOES_PADRAO = [
+  { value: "ok", label: "OK", tone: "ok" },
+  { value: "atencao", label: "Atenção", tone: "warn" },
+  { value: "na", label: "N/A", tone: "na" }
+];
+
+const OPCOES_OK_NC_NA = [
+  { value: "ok", label: "OK", tone: "ok" },
+  { value: "nao_conforme", label: "Não Conforme", tone: "nc" },
+  { value: "na", label: "N/A", tone: "na" }
+];
+
+const OPCOES_AR_STANDBY = [
+  { value: "no_ar", label: "No ar", tone: "ok" },
+  { value: "standby", label: "Standby", tone: "warn" }
+];
+
+// Checklist específico do posto P001 (Ribeirão Preto), organizado por rack.
+export const checklistRibeiraoPreto = [
+  { rack: "Rack 1", label: "Linhas de Transmissão Pressurizadas", opcoes: OPCOES_OK_NC_NA },
+  { rack: "Rack 1", label: "Monitoração Áudio CBN (Marshall)", opcoes: OPCOES_OK_NC_NA },
+  { rack: "Rack 1", label: "Orban Titular", opcoes: OPCOES_OK_NC_NA },
+  { rack: "Rack 1", label: "Orban Reserva", opcoes: OPCOES_OK_NC_NA },
+  { rack: "Rack 2", label: "Rádios Ceragon (inspeção visual)", opcoes: OPCOES_OK_NC_NA },
+  { rack: "Rack 2", label: "Conversor ASI - IP", opcoes: OPCOES_OK_NC_NA },
+  { rack: "Rack 2", label: "Switch MNG Ceragons", opcoes: OPCOES_OK_NC_NA },
+  { rack: "Rack 3", label: "Monitor de Temperatura (inspeção visual)", opcoes: OPCOES_OK_NC_NA },
+  { rack: "Rack 3", label: "Conversor ASI - SDI Tecsys", opcoes: OPCOES_OK_NC_NA },
+  { rack: "Rack 3", label: "Computador NEC", opcoes: OPCOES_OK_NC_NA },
+  { rack: "Rack 4", label: "MK2 (inspeção visual)", opcoes: OPCOES_OK_NC_NA },
+  { rack: "Rack 4", label: "Switchs (inspeção visual)", opcoes: OPCOES_OK_NC_NA },
+  { rack: "Rack 4", label: "Monitores Marshall", opcoes: OPCOES_OK_NC_NA },
+  { rack: "Rack 4", label: "Distribuidor Titular", opcoes: OPCOES_OK_NC_NA },
+  { rack: "Rack 5", label: "Monitores Bird (inspeção visual)", opcoes: OPCOES_OK_NC_NA },
+  { rack: "Rack 5", label: "Chave NEC", opcoes: OPCOES_OK_NC_NA },
+  { rack: "Rack 5", label: "Conversor NEC SDI HD", opcoes: OPCOES_OK_NC_NA },
+  { rack: "Rack 5", label: "Conversor NEC SDI 1Seg", opcoes: OPCOES_OK_NC_NA },
+  { rack: "Rack 6", label: "TX NEC 1", opcoes: OPCOES_AR_STANDBY },
+  { rack: "Rack 6", label: "TX NEC 2", opcoes: OPCOES_AR_STANDBY }
+];
+
+// Retorna o checklist do posto: lista própria do P001 ou o padrão para os demais.
+export function getChecklistForPosto(codigo) {
+  const normalized = String(codigo || "").trim().toUpperCase();
+  if (normalized === POSTO_RIBEIRAO_PRETO) {
+    return checklistRibeiraoPreto.map((item) => ({ ...item }));
+  }
+  return checklistBase.map((label) => ({ rack: null, label, opcoes: OPCOES_PADRAO }));
+}
+
 export function slugify(value) {
   return value
     .normalize("NFD")

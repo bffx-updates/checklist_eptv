@@ -15,6 +15,9 @@ if (!posto) {
 setText("#posto-title", `Chamado - ${posto.codigo} - ${posto.nome}`);
 setText("#posto-city", posto.cidade || "");
 
+const backLink = $("#chamado-back");
+if (backLink) backLink.href = `posto.html?posto=${encodeURIComponent(posto.codigo)}`;
+
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
   form.classList.add("is-loading");

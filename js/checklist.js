@@ -6,6 +6,7 @@ import {
   bindShell,
   escapeHtml,
   fileToDataUrl,
+  formatDate,
   requireAuth,
   setText,
   showToast,
@@ -30,7 +31,6 @@ function runWizard(posto) {
   const state = items.map(() => ({ value: null, label: "", tone: null, observacao: "" }));
   let index = 0;
   let fotos = [];
-  let gps = null;
 
   const wizardScreen = $("#wizard-screen");
   const finishForm = $("#checklist-form");
@@ -42,7 +42,6 @@ function runWizard(posto) {
   const actionsEl = $("#wiz-actions");
   const photoInput = $("#fotos");
   const photoPreview = $("#photo-preview");
-  const gpsOutput = $("#gps-output");
 
   setText("#wiz-total", total);
   setText("#posto-title", `${posto.codigo} · ${posto.nome}`);
@@ -141,28 +140,6 @@ function runWizard(posto) {
     $("#checklist-summary").innerHTML = `<span class="sum-chip">${escapeHtml(posto.codigo)} · ${escapeHtml(posto.nome)}</span>${chips}`;
   }
 
-  $("#capture-gps").addEventListener("click", () => {
-    if (!navigator.geolocation) {
-      showToast("GPS indisponível neste dispositivo.", "error");
-      return;
-    }
-    gpsOutput.textContent = "Obtendo localização...";
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        gps = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          precisao: position.coords.accuracy
-        };
-        gpsOutput.textContent = `${gps.latitude.toFixed(6)}, ${gps.longitude.toFixed(6)} (${Math.round(gps.precisao)} m)`;
-      },
-      () => {
-        gpsOutput.textContent = "Localização não capturada.";
-      },
-      { enableHighAccuracy: true, timeout: 12000, maximumAge: 30000 }
-    );
-  });
-
   photoInput.addEventListener("change", async () => {
     const selected = [...photoInput.files];
     fotos = await Promise.all(selected.map((file) => fileToDataUrl(file)));
@@ -175,6 +152,11 @@ function runWizard(posto) {
 
     const formData = new FormData(finishForm);
     const { data, hora } = todayParts();
+    const supervisorStatus = {
+      cor: formData.get("supervisorStatus"),
+      descricao: formData.get("supervisorDescricao") || ""
+    };
+    const observacoes = formData.get("observacoes") || "";
     const checklist = items.map((item, i) => ({
       rack: item.rack || null,
       item: item.label,
@@ -183,8 +165,12 @@ function runWizard(posto) {
       observacao: state[i].observacao || ""
     }));
 
+    const mensagem = buildWhatsappText({ data, hora, supervisorStatus, observacoes });
+    // Copia dentro do gesto do clique para o navegador liberar a área de transferência.
+    await copyToClipboard(mensagem);
+
     try {
-      const result = await saveVisita({
+      await saveVisita({
         tipo: "preventiva",
         posto: {
           codigo: posto.codigo,
@@ -200,24 +186,94 @@ function runWizard(posto) {
         },
         data,
         hora,
-        gps,
+        gps: null,
         checklist,
-        supervisorStatus: {
-          cor: formData.get("supervisorStatus"),
-          descricao: formData.get("supervisorDescricao") || ""
-        },
-        observacoes: formData.get("observacoes") || "",
+        supervisorStatus,
+        observacoes,
         fotos
       });
-
-      showToast(result.status === "enviada" ? "Preventiva enviada." : "Preventiva salva para sincronização.", "success");
-      window.setTimeout(() => {
-        location.href = `posto.html?posto=${encodeURIComponent(posto.codigo)}`;
-      }, 900);
+      openShareModal(mensagem);
     } catch (error) {
       showToast(error.message || "Não foi possível salvar a preventiva.", "error");
-    } finally {
       finishForm.classList.remove("is-loading");
     }
   });
+
+  function buildWhatsappText({ data, hora, supervisorStatus, observacoes }) {
+    const EMOJI = { ok: "✅", nao_conforme: "❌", na: "➖", atencao: "⚠️", no_ar: "✅", standby: "🟡" };
+    const SUP = { verde: "🟢 Verde", amarelo: "🟡 Amarelo", vermelho: "🔴 Vermelho" };
+
+    const linhas = [];
+    linhas.push("📋 *CHECKLIST PREVENTIVA*");
+    linhas.push(`📍 ${posto.codigo} - ${posto.nome}`);
+    linhas.push(`👤 ${profile.nome || profile.email || "-"}`);
+    linhas.push(`📅 ${formatDate(data)} ${hora}`);
+    linhas.push("");
+
+    let rackAtual = null;
+    items.forEach((item, i) => {
+      if (item.rack && item.rack !== rackAtual) {
+        if (rackAtual !== null) linhas.push("");
+        rackAtual = item.rack;
+        linhas.push(`*${item.rack}*`);
+      }
+      const atual = state[i];
+      const emoji = EMOJI[atual.value] || "•";
+      const sufixo = atual.value === "ok" ? "" : ` — ${atual.label}`;
+      let linha = `${emoji} ${item.label}${sufixo}`;
+      if (atual.observacao) linha += ` _(${atual.observacao})_`;
+      linhas.push(linha);
+    });
+
+    linhas.push("");
+    linhas.push(`Status para o supervisor: ${SUP[supervisorStatus.cor] || "-"}`);
+    if (supervisorStatus.descricao) linhas.push(`🗒️ ${supervisorStatus.descricao}`);
+    if (observacoes) linhas.push(`📝 ${observacoes}`);
+
+    return linhas.join("\n");
+  }
+
+  function openShareModal(mensagem) {
+    const modal = $("#share-modal");
+    $("#share-preview").textContent = mensagem;
+    $("#share-open").href = `https://wa.me/?text=${encodeURIComponent(mensagem)}`;
+    finishForm.classList.remove("is-loading");
+    modal.hidden = false;
+
+    $("#share-copy").onclick = async () => {
+      const copiou = await copyToClipboard(mensagem);
+      showToast(
+        copiou ? "Checklist copiado de novo." : "Não consegui copiar. Selecione o texto e copie manualmente.",
+        copiou ? "success" : "error"
+      );
+    };
+    $("#share-done").onclick = () => {
+      location.href = `posto.html?posto=${encodeURIComponent(posto.codigo)}`;
+    };
+  }
+}
+
+async function copyToClipboard(text) {
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch {
+    // Cai para o método alternativo abaixo.
+  }
+  try {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    const copiou = document.execCommand("copy");
+    document.body.removeChild(textarea);
+    return copiou;
+  } catch {
+    return false;
+  }
 }

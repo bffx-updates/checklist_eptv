@@ -1704,6 +1704,75 @@ tbody tr:hover {
   pointer-events: none;
 }
 
+/* ── Modal (compartilhar checklist) ──────── */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgb(43 36 30 / 45%);
+  animation: kin 0.2s ease;
+}
+
+.modal__card {
+  width: min(440px, 100%);
+  max-height: 92dvh;
+  overflow: auto;
+  padding: 26px 22px 22px;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  text-align: center;
+  animation: kpop 0.35s ease both;
+}
+
+.modal__icon {
+  font-size: 44px;
+  line-height: 1;
+}
+
+.modal__title {
+  margin: 10px 0 4px;
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.modal__text {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.modal__text strong {
+  color: var(--primary);
+}
+
+.modal__preview {
+  max-height: 230px;
+  overflow: auto;
+  margin: 0 0 18px;
+  padding: 14px;
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface-2);
+  color: var(--text);
+  text-align: left;
+  font-family: Nunito, system-ui, sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.modal__actions {
+  display: grid;
+  gap: 10px;
+}
+
 /* ══ Dashboard · Centro de operações (escuro) ══ */
 
 .ops {

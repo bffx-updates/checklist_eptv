@@ -58,15 +58,11 @@
             <div id="photo-preview" class="photo-preview"></div>
           </section>
           <section class="panel">
-            <h2>Localização e observações</h2>
-            <div class="form">
-              <button id="capture-gps" class="secondary-button" type="button">Capturar GPS</button>
-              <div id="gps-output" class="empty-state">GPS ainda não capturado.</div>
-              <label class="field">
-                <span>Observações gerais</span>
-                <textarea name="observacoes"></textarea>
-              </label>
-            </div>
+            <h2>Observações</h2>
+            <label class="field">
+              <span>Observações gerais</span>
+              <textarea name="observacoes"></textarea>
+            </label>
           </section>
           <section class="panel">
             <h2>Como o posto fica depois da visita?</h2>
@@ -97,6 +93,20 @@
           <button class="button" type="submit">Concluir visita</button>
         </form>
       </main>
+    </div>
+
+    <div class="modal" id="share-modal" hidden>
+      <div class="modal__card">
+        <div class="modal__icon">📋</div>
+        <h2 class="modal__title">Checklist na memória</h2>
+        <p class="modal__text">Copiei o checklist. Abra o WhatsApp e <strong>cole no grupo RTX</strong>.</p>
+        <pre class="modal__preview" id="share-preview"></pre>
+        <div class="modal__actions">
+          <a class="button" id="share-open" href="#" target="_blank" rel="noopener">Abrir WhatsApp</a>
+          <button class="secondary-button" type="button" id="share-copy">Copiar de novo</button>
+          <button class="secondary-button" type="button" id="share-done">Pronto</button>
+        </div>
+      </div>
     </div>
     <script type="module" src="js/checklist.js"></script>
   </body>

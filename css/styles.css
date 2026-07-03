@@ -2392,3 +2392,180 @@ tbody tr:hover {
     grid-template-columns: 1fr;
   }
 }
+
+/* ═════════════════════════════════════════════
+   ESCOLHA FINAL — 2b · iOS ESCURO (arquivo único)
+   Cole no FINAL de css/styles.css.
+   Inclui: tema escuro do iPhone (todas as telas)
+   + selo dos desenhos do checklist + animação.
+   Não é preciso colar mais nenhum outro CSS.
+   ═════════════════════════════════════════════ */
+
+:root {
+  color-scheme: dark;
+  --canvas: #000000;
+  --bg: #000000;
+  --surface: #1C1C1E;
+  --surface-2: #2C2C2E;
+  --field: #1C1C1E;
+  --text: #F2F2F7;
+  --ink: #F2F2F7;
+  --muted: #98989F;
+  --faint: #636366;
+  --line: #38383A;
+  --primary: #0A84FF;
+  --primary-strong: #409CFF;
+  --primary-soft: rgb(10 132 255 / 16%);
+  --danger: #FF453A;
+  --danger-soft: rgb(255 69 58 / 16%);
+  --success: #30D158;
+  --success-soft: rgb(48 209 88 / 16%);
+  --warning: #FF9F0A;
+  --warning-soft: rgb(255 159 10 / 16%);
+  --spectrum: linear-gradient(90deg, #0A84FF, #30D158, #FF9F0A, #FF453A);
+  --shadow: 0 16px 40px rgb(0 0 0 / 60%);
+  --shadow-card: 0 1px 6px rgb(0 0 0 / 40%);
+  --glow: 0 12px 26px rgb(10 132 255 / 35%);
+  --radius: 16px;
+  --radius-lg: 22px;
+}
+
+/* Fonte do iPhone (San Francisco no iOS/macOS) */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+}
+
+/* Selo dos desenhos do checklist (como no mockup 2b) */
+.wiz-icon {
+  width: 126px;
+  height: 126px;
+  padding: 27px;
+  box-sizing: border-box;
+  border-radius: 32px;
+  background: var(--primary-soft);
+  color: var(--primary-strong);
+}
+
+.wiz-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Barra de progresso do assistente no escuro */
+.wiz-dots i {
+  background: #2C2C2E;
+}
+
+/* Entrada suave do desenho a cada item */
+.wiz-stage.is-anim .wiz-icon {
+  animation: wiz-icon-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes wiz-icon-pop {
+  from { opacity: 0; transform: scale(0.72); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Botões de resposta do checklist — efeito "tecla de preset"
+   (tecla escura com relevo + LED no canto, como em rack de áudio) */
+.wiz-btn {
+  position: relative;
+  border: 1px solid rgb(255 255 255 / 9%);
+  border-radius: 16px;
+  background: linear-gradient(180deg, #232327, #17171A);
+  color: #F2F2F7;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 8%), 0 6px 14px rgb(0 0 0 / 45%);
+  transition: transform 0.12s, box-shadow 0.12s, border-color 0.12s;
+}
+
+.wiz-btn:hover { transform: translateY(-1px); }
+
+.wiz-btn:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 3px 8px rgb(0 0 0 / 55%);
+}
+
+/* LED no canto superior direito, na cor da resposta */
+.wiz-btn::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.wiz-btn--ok::after { background: var(--success); box-shadow: 0 0 8px rgb(48 209 88 / 90%); }
+.wiz-btn--warn::after { background: var(--warning); box-shadow: 0 0 8px rgb(255 159 10 / 90%); }
+.wiz-btn--nc::after { background: var(--danger); box-shadow: 0 0 8px rgb(255 69 58 / 90%); }
+.wiz-btn--na::after { background: #6C6C70; box-shadow: 0 0 6px rgb(108 108 112 / 60%); }
+
+/* Tecla selecionada "acende" */
+.wiz-btn--ok.is-selected {
+  border-color: var(--success);
+  color: var(--success);
+  background: linear-gradient(180deg, #1E2B22, #151A16);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 8%), 0 0 0 1px var(--success), 0 8px 18px rgb(48 209 88 / 25%);
+}
+
+.wiz-btn--warn.is-selected {
+  border-color: var(--warning);
+  color: var(--warning);
+  background: linear-gradient(180deg, #2B2318, #1A1510);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 8%), 0 0 0 1px var(--warning), 0 8px 18px rgb(255 159 10 / 25%);
+}
+
+.wiz-btn--nc.is-selected {
+  border-color: var(--danger);
+  color: var(--danger);
+  background: linear-gradient(180deg, #2B1917, #1A1210);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 8%), 0 0 0 1px var(--danger), 0 8px 18px rgb(255 69 58 / 25%);
+}
+
+.wiz-btn--na.is-selected {
+  border-color: #98989F;
+  color: #F2F2F7;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 8%), 0 0 0 1px #98989F;
+}
+
+/* Cards e molduras — mesmo relevo das teclas */
+.panel,
+.home-tile,
+.actions-card,
+.user-chip,
+.icon-button,
+.modal__card,
+.ops-card,
+.secondary-button {
+  border: 1px solid rgb(255 255 255 / 9%);
+  background: linear-gradient(180deg, #232327, #17171A);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 8%), 0 6px 14px rgb(0 0 0 / 45%);
+}
+
+/* Campos "afundados" (relevo oposto ao da tecla) */
+.input,
+.select,
+textarea,
+.wiz-obs {
+  border: 1px solid rgb(255 255 255 / 7%);
+  background: #141416;
+  box-shadow: inset 0 2px 6px rgb(0 0 0 / 45%);
+  color: var(--text);
+}
+
+/* Botão principal azul com relevo */
+.button,
+.big-action {
+  border: 1px solid rgb(255 255 255 / 18%);
+  background: linear-gradient(180deg, #2B93FF, #0774E8);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 25%), 0 12px 26px rgb(10 132 255 / 30%);
+}
+
+/* Selo do desenho com borda sutil */
+.wiz-icon {
+  border: 1px solid rgb(255 255 255 / 8%);
+}
+
+/* Dica: atualize também o <meta name="theme-color"> das páginas
+   de #FFF9F1 para #000000 para a barra do celular combinar. */

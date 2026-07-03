@@ -1,5 +1,5 @@
 import { getChecklistForPosto } from "./data.js";
-import { checklistIcons, iconeRack } from "./checklist-icons.js";
+import { checklistIcons, iconeRack, getIconeChecklist } from "./checklist-icons.js";
 import { getPostoByAccess, saveVisita } from "./firebase-service.js";
 import {
   $,
@@ -55,7 +55,7 @@ function runWizard(posto) {
   function renderItem() {
     const item = items[index];
     setText("#wiz-idx", index + 1);
-    iconEl.innerHTML = item.rack ? iconeRack : checklistIcons[index] || iconeRack;
+    iconEl.innerHTML = getIconeChecklist(item, index);
     rackEl.textContent = item.rack || "";
     rackEl.hidden = !item.rack;
     labelEl.textContent = item.label;

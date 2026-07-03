@@ -6,7 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 PWA for field technical inspection of broadcast-retransmission sites ("postos"). Technicians scan a
 QR code to open a posto, then record either a *chamado* (incident + resolution) or a *preventiva*
-(10-item checklist with photos and GPS). Vanilla HTML + CSS + ES6 modules — **no framework, no
+(item-by-item checklist wizard with photos and GPS). The preventiva is **per-posto**: 10 standard
+items for most postos, but posto `P001` (Ribeirão Preto) has its own 20-item, rack-grouped checklist
+with per-item option sets — see `getChecklistForPosto` in [js/data.js](js/data.js). Vanilla HTML + CSS + ES6 modules — **no framework, no
 bundler, no TypeScript, no transpile step**. The same source is wrapped as an Android APK via
 Capacitor. Domain language, identifiers, UI strings, and comments are all pt-BR — match that.
 
@@ -76,7 +78,11 @@ Shared layers:
   `escapeHtml()` user/data values when building innerHTML** — that's the established convention.
 - [js/firebase-service.js](js/firebase-service.js) — all auth + data access.
 - [js/data.js](js/data.js) — static seed data (34 postos `P001`–`P034`, 12 técnicos with
-  `slug@postos.local` emails, 10 checklist items) **and** the access-control predicates.
+  `slug@postos.local` emails, checklist definitions) **and** the access-control predicates.
+  `getChecklistForPosto(codigo)` returns the per-posto checklist: the rack-grouped
+  `checklistRibeiraoPreto` for `P001`, otherwise the standard `checklistBase` (10 items). Each item
+  carries its own `opcoes` (answer set + tone); [js/checklist.js](js/checklist.js) renders the wizard
+  dynamically from that (variable buttons per item, e.g. OK/Não Conforme/N/A or No ar/Standby).
 
 The flow: `login → index → scanner → posto → chamado|checklist → (posto) `; `historico`, `senha`,
 `configuracoes` (supervisor), and `dashboard` are reached separately.

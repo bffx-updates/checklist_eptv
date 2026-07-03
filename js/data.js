@@ -98,10 +98,9 @@ export const OPCOES_PADRAO = [
   { value: "na", label: "N/A", tone: "na" }
 ];
 
-const OPCOES_OK_NC_NA = [
+const OPCOES_OK_NC = [
   { value: "ok", label: "OK", tone: "ok" },
-  { value: "nao_conforme", label: "Não Conforme", tone: "nc" },
-  { value: "na", label: "N/A", tone: "na" }
+  { value: "nao_conforme", label: "Não Conforme", tone: "nc" }
 ];
 
 const OPCOES_AR_STANDBY = [
@@ -111,24 +110,24 @@ const OPCOES_AR_STANDBY = [
 
 // Checklist específico do posto P001 (Ribeirão Preto), organizado por rack.
 export const checklistRibeiraoPreto = [
-  { rack: "Rack 1", label: "Linhas de Transmissão Pressurizadas", opcoes: OPCOES_OK_NC_NA },
-  { rack: "Rack 1", label: "Monitoração Áudio CBN (Marshall)", opcoes: OPCOES_OK_NC_NA },
-  { rack: "Rack 1", label: "Orban Titular", opcoes: OPCOES_OK_NC_NA },
-  { rack: "Rack 1", label: "Orban Reserva", opcoes: OPCOES_OK_NC_NA },
-  { rack: "Rack 2", label: "Rádios Ceragon (inspeção visual)", opcoes: OPCOES_OK_NC_NA },
-  { rack: "Rack 2", label: "Conversor ASI - IP", opcoes: OPCOES_OK_NC_NA },
-  { rack: "Rack 2", label: "Switch MNG Ceragons", opcoes: OPCOES_OK_NC_NA },
-  { rack: "Rack 3", label: "Monitor de Temperatura (inspeção visual)", opcoes: OPCOES_OK_NC_NA },
-  { rack: "Rack 3", label: "Conversor ASI - SDI Tecsys", opcoes: OPCOES_OK_NC_NA },
-  { rack: "Rack 3", label: "Computador NEC", opcoes: OPCOES_OK_NC_NA },
-  { rack: "Rack 4", label: "MK2 (inspeção visual)", opcoes: OPCOES_OK_NC_NA },
-  { rack: "Rack 4", label: "Switchs (inspeção visual)", opcoes: OPCOES_OK_NC_NA },
-  { rack: "Rack 4", label: "Monitores Marshall", opcoes: OPCOES_OK_NC_NA },
-  { rack: "Rack 4", label: "Distribuidor Titular", opcoes: OPCOES_OK_NC_NA },
-  { rack: "Rack 5", label: "Monitores Bird (inspeção visual)", opcoes: OPCOES_OK_NC_NA },
-  { rack: "Rack 5", label: "Chave NEC", opcoes: OPCOES_OK_NC_NA },
-  { rack: "Rack 5", label: "Conversor NEC SDI HD", opcoes: OPCOES_OK_NC_NA },
-  { rack: "Rack 5", label: "Conversor NEC SDI 1Seg", opcoes: OPCOES_OK_NC_NA },
+  { rack: "Rack 1", label: "Linhas de Transmissão Pressurizadas", opcoes: OPCOES_OK_NC },
+  { rack: "Rack 1", label: "Monitoração Áudio CBN (Marshall)", opcoes: OPCOES_OK_NC },
+  { rack: "Rack 1", label: "Orban Titular", opcoes: OPCOES_OK_NC },
+  { rack: "Rack 1", label: "Orban Reserva", opcoes: OPCOES_OK_NC },
+  { rack: "Rack 2", label: "Rádios Ceragon (inspeção visual)", opcoes: OPCOES_OK_NC },
+  { rack: "Rack 2", label: "Conversor ASI - IP", opcoes: OPCOES_OK_NC },
+  { rack: "Rack 2", label: "Switch MNG Ceragons", opcoes: OPCOES_OK_NC },
+  { rack: "Rack 3", label: "Monitor de Temperatura (inspeção visual)", opcoes: OPCOES_OK_NC },
+  { rack: "Rack 3", label: "Conversor ASI - SDI Tecsys", opcoes: OPCOES_OK_NC },
+  { rack: "Rack 3", label: "Computador NEC", opcoes: OPCOES_OK_NC },
+  { rack: "Rack 4", label: "MK2 (inspeção visual)", opcoes: OPCOES_OK_NC },
+  { rack: "Rack 4", label: "Switchs (inspeção visual)", opcoes: OPCOES_OK_NC },
+  { rack: "Rack 4", label: "Monitores Marshall", opcoes: OPCOES_OK_NC },
+  { rack: "Rack 4", label: "Distribuidor Titular", opcoes: OPCOES_OK_NC },
+  { rack: "Rack 5", label: "Monitores Bird (inspeção visual)", opcoes: OPCOES_OK_NC },
+  { rack: "Rack 5", label: "Chave NEC", opcoes: OPCOES_OK_NC },
+  { rack: "Rack 5", label: "Conversor NEC SDI HD", opcoes: OPCOES_OK_NC },
+  { rack: "Rack 5", label: "Conversor NEC SDI 1Seg", opcoes: OPCOES_OK_NC },
   { rack: "Rack 6", label: "TX NEC 1", opcoes: OPCOES_AR_STANDBY },
   { rack: "Rack 6", label: "TX NEC 2", opcoes: OPCOES_AR_STANDBY }
 ];

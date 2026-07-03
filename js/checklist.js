@@ -71,6 +71,7 @@ function runWizard(posto) {
   }
 
   function renderOptions(item) {
+    actionsEl.classList.toggle("wiz-actions--row", item.opcoes.length === 2);
     actionsEl.innerHTML = item.opcoes
       .map((opcao) => {
         const selected = state[index].value === opcao.value ? " is-selected" : "";

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#0C1122">
+    <meta name="theme-color" content="#000000">
     <title>Centro de operações | Inspeção Técnica</title>
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,7 +14,7 @@
   <body class="dashboard-page ops">
     <div class="ops-shell">
       <header class="ops-top">
-        <div class="ops-logo"><span>EPTV</span></div>
+        <div class="ops-badge">EPTV</div>
         <div class="ops-title">
           <strong>Centro de operações · Retransmissão</strong>
           <span id="ops-subtitle">postos monitorados</span>
@@ -29,10 +29,9 @@
         <aside class="ops-rail">
           <section class="ops-card ops-ring-card">
             <div class="ops-ring">
-              <div class="ops-ring__sweep"></div>
-              <svg width="190" height="190" viewBox="0 0 130 130" aria-hidden="true">
+              <svg width="150" height="150" viewBox="0 0 130 130" aria-hidden="true">
                 <circle cx="65" cy="65" r="54" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="9"></circle>
-                <circle id="ring-arc" cx="65" cy="65" r="54" fill="none" stroke="#1FA35C" stroke-width="9" stroke-linecap="round"></circle>
+                <circle id="ring-arc" cx="65" cy="65" r="54" fill="none" stroke="#30D158" stroke-width="9" stroke-linecap="round"></circle>
               </svg>
               <div class="ops-ring__pct"><strong id="ring-pct">0%</strong><span>cobertura<br>do mês</span></div>
             </div>
@@ -44,15 +43,13 @@
             </div>
           </section>
           <section class="ops-card ops-feed">
-            <div class="ops-feed__head"><i></i> Últimos registros</div>
+            <div class="ops-feed__head">Últimos registros</div>
             <div class="ops-feed__list" id="ops-feed"></div>
           </section>
         </aside>
 
-        <main class="ops-board" id="ops-board"></main>
+        <main class="ops-grid" id="ops-grid"></main>
       </div>
-
-      <div class="ops-ticker"><div class="ops-ticker__track" id="ops-ticker"></div></div>
     </div>
 
     <section class="ops-details">

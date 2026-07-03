@@ -9,18 +9,12 @@ const tableBody = $("#visits-table tbody");
 const details = $("#visit-details");
 const postoSelect = $("#filter-posto");
 const tecnicoSelect = $("#filter-tecnico");
-const board = $("#ops-board");
+const grid = $("#ops-grid");
 const feedEl = $("#ops-feed");
-const tickerEl = $("#ops-ticker");
 const ringArc = $("#ring-arc");
 
 const RING_CIRC = 2 * Math.PI * 54;
-const COLUMNS = [
-  { key: "vermelho", label: "Crítico" },
-  { key: "amarelo", label: "Atenção" },
-  { key: "pendente", label: "Pendente" },
-  { key: "verde", label: "OK" }
-];
+const TONE = { verde: "#30D158", amarelo: "#FF9F0A", vermelho: "#FF453A", pendente: "#636366" };
 
 const [postos, tecnicos] = await Promise.all([listPostos(), listTecnicos()]);
 
@@ -34,6 +28,7 @@ tecnicoSelect.innerHTML = `<option value="">Todos os técnicos</option>${tecnico
 
 if (ringArc) ringArc.setAttribute("stroke-dasharray", String(RING_CIRC));
 startClock();
+setText("#ops-subtitle", `${postos.length} postos monitorados`);
 
 filtersForm.addEventListener("input", renderTable);
 await Promise.all([renderOps(), renderTable()]);
@@ -42,73 +37,51 @@ async function renderOps() {
   const todas = await listVisitas();
   const ultimas = latestVisitsByPosto(todas);
 
-  const buckets = { vermelho: [], amarelo: [], pendente: [], verde: [] };
-  for (const posto of postos) {
-    const cor = ultimas.get(posto.codigo)?.supervisorStatus?.cor;
-    const bucket = cor === "vermelho" || cor === "amarelo" || cor === "verde" ? cor : "pendente";
-    buckets[bucket].push(posto);
-  }
+  const counts = { verde: 0, amarelo: 0, vermelho: 0, pendente: 0 };
+  grid.innerHTML = postos
+    .map((posto) => {
+      const cor = ultimas.get(posto.codigo)?.supervisorStatus?.cor;
+      const bucket = cor === "verde" || cor === "amarelo" || cor === "vermelho" ? cor : "pendente";
+      counts[bucket] += 1;
+      return `
+        <div class="ops-posto">
+          <div class="ops-posto__info">
+            <strong>${escapeHtml(posto.nome)}</strong>
+            <span>${escapeHtml(posto.codigo)}</span>
+          </div>
+          <i class="ops-posto__dot" style="background:${TONE[bucket]}"></i>
+        </div>
+      `;
+    })
+    .join("");
 
-  setText("#dash-verde", buckets.verde.length);
-  setText("#dash-amarelo", buckets.amarelo.length);
-  setText("#dash-vermelho", buckets.vermelho.length);
-  setText("#dash-pendente", buckets.pendente.length);
+  setText("#dash-verde", counts.verde);
+  setText("#dash-amarelo", counts.amarelo);
+  setText("#dash-vermelho", counts.vermelho);
+  setText("#dash-pendente", counts.pendente);
 
   const mesAtual = new Date().toISOString().slice(0, 7);
-  const hoje = new Date().toISOString().slice(0, 10);
   const visitadosMes = new Set(
     todas.filter((visita) => String(visita.data || "").startsWith(mesAtual)).map((visita) => visita.posto?.codigo).filter(Boolean)
   );
-  const visitasHoje = todas.filter((visita) => visita.data === hoje).length;
-  const pct = postos.length ? Math.round((visitadosMes.size / postos.length) * 100) : 0;
-  setRing(pct);
-
-  const dataLabel = new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" });
-  setText(
-    "#ops-subtitle",
-    `${postos.length} postos monitorados · ${dataLabel.charAt(0).toUpperCase() + dataLabel.slice(1)} · ${visitasHoje} visitas hoje`
-  );
-
-  board.innerHTML = COLUMNS.map(({ key, label }) => renderColumn(key, label, buckets[key], ultimas)).join("");
+  setRing(postos.length ? Math.round((visitadosMes.size / postos.length) * 100) : 0);
 
   feedEl.innerHTML = todas.length
-    ? todas.slice(0, 6).map(renderFeedItem).join("")
+    ? todas.slice(0, 4).map(renderFeedItem).join("")
     : `<div class="ops-feed__item"><div><strong>Sem registros ainda</strong><span>Aguardando visitas</span></div></div>`;
-
-  const alertas = [...buckets.vermelho, ...buckets.amarelo].map((posto) => {
-    const cor = ultimas.get(posto.codigo)?.supervisorStatus?.cor;
-    return `${posto.codigo} ${posto.nome}: ${cor === "vermelho" ? "status crítico" : "requer atenção"}`;
-  });
-  const tickerText = (alertas.length ? alertas.join("   ·   ") : "Todos os postos sob controle") + "   ·   ";
-  tickerEl.innerHTML = `<span>${escapeHtml(tickerText)}</span><span>${escapeHtml(tickerText)}</span>`;
-}
-
-function renderColumn(key, label, list, ultimas) {
-  const chips = list
-    .map((posto) => {
-      const visita = ultimas.get(posto.codigo);
-      const info = key === "pendente" ? "sem visita" : relativeDays(visita?.data);
-      return `<div class="ops-chip"><strong>${escapeHtml(posto.codigo)}</strong><span>${escapeHtml(posto.nome)} · ${escapeHtml(info)}</span></div>`;
-    })
-    .join("");
-  return `
-    <section class="ops-col ops-col--${key}">
-      <div class="ops-col__head"><i></i><strong>${label}</strong><b>${list.length}</b></div>
-      <div class="ops-col__list">${chips || `<div class="ops-chip"><span>Nenhum posto</span></div>`}</div>
-    </section>
-  `;
 }
 
 function renderFeedItem(visita) {
   const cor = visita.supervisorStatus?.cor;
-  const dot =
-    cor === "verde" ? "#1FA35C" : cor === "amarelo" ? "#D99000" : cor === "vermelho" ? "#E23D3D" : "#7C8499";
+  const tone = TONE[cor] || TONE.pendente;
+  const acao =
+    visita.tipo === "preventiva" ? "Preventiva concluída" : visita.tipo === "chamado" ? "Chamado registrado" : "Visita enviada";
   return `
     <div class="ops-feed__item">
-      <i style="background:${dot}"></i>
+      <i style="background:${tone}"></i>
       <div>
-        <strong>${escapeHtml(visita.tecnico?.nome || "-")}</strong>
-        <span>${serviceLabel(visita)} · ${escapeHtml(visita.posto?.codigo || "-")}</span>
+        <strong>${escapeHtml(visita.posto?.codigo || "-")} · ${acao}</strong>
+        <span>${escapeHtml(visita.tecnico?.nome || "-")}</span>
       </div>
       <em>${escapeHtml(visita.hora || formatDate(visita.data) || "")}</em>
     </div>
@@ -119,18 +92,6 @@ function setRing(pct) {
   const clamped = Math.max(0, Math.min(100, pct));
   if (ringArc) ringArc.setAttribute("stroke-dashoffset", String(RING_CIRC - (clamped / 100) * RING_CIRC));
   setText("#ring-pct", `${clamped}%`);
-}
-
-function relativeDays(dateStr) {
-  if (!dateStr) return "—";
-  const then = new Date(`${dateStr}T00:00:00`);
-  if (Number.isNaN(then.getTime())) return "—";
-  const now = new Date();
-  now.setHours(0, 0, 0, 0);
-  const days = Math.floor((now.getTime() - then.getTime()) / 86400000);
-  if (days <= 0) return "hoje";
-  if (days === 1) return "ontem";
-  return `${days}d`;
 }
 
 function startClock() {

@@ -2569,3 +2569,96 @@ textarea,
 
 /* Dica: atualize também o <meta name="theme-color"> das páginas
    de #FFF9F1 para #000000 para a barra do celular combinar. */
+
+/* ── Dashboard · grid de postos (design final iOS) ── */
+
+.ops { --bg: #000; }
+
+.ops-badge {
+  display: grid;
+  flex: none;
+  place-items: center;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: #0A84FF;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.ops-live { background: rgb(48 209 88 / 14%); color: #30D158; }
+.ops-live i { background: #30D158; }
+
+.ops-exit {
+  border: 0;
+  background: rgb(255 69 58 / 14%);
+  color: #FF453A;
+}
+.ops-exit:hover { background: rgb(255 69 58 / 22%); color: #FF453A; }
+
+.ops-ring { width: 150px; height: 150px; }
+.ops-ring__pct strong { font-size: 27px; }
+
+.ops-counter--verde { background: rgb(48 209 88 / 14%); }
+.ops-counter--verde strong { color: #30D158; }
+.ops-counter--amarelo { background: rgb(255 159 10 / 14%); }
+.ops-counter--amarelo strong { color: #FF9F0A; }
+.ops-counter--vermelho { background: rgb(255 69 58 / 14%); }
+.ops-counter--vermelho strong { color: #FF453A; }
+.ops-counter--pendente { background: #2C2C2E; }
+.ops-counter--pendente strong { color: #98989F; }
+
+.ops-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  align-content: start;
+}
+
+.ops-posto {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 14px;
+  border: 1px solid rgb(255 255 255 / 9%);
+  border-radius: 14px;
+  background: linear-gradient(180deg, #232327, #17171A);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 8%), 0 5px 12px rgb(0 0 0 / 40%);
+}
+
+.ops-posto__info { flex: 1; min-width: 0; }
+
+.ops-posto__info strong {
+  display: block;
+  overflow: hidden;
+  font-size: 14.5px;
+  font-weight: 800;
+  color: #F2F2F7;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.ops-posto__info span {
+  display: block;
+  margin-top: 2px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #98989F;
+}
+
+.ops-posto__dot {
+  width: 10px;
+  height: 10px;
+  flex: none;
+  border-radius: 50%;
+}
+
+@media (max-width: 1080px) {
+  .ops-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 620px) {
+  .ops-grid { grid-template-columns: 1fr; }
+}
